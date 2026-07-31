@@ -704,6 +704,8 @@
     for(var i=0;i<nodes.length;i++){
       var v=get(nodes[i].dataset.bind);
       nodes[i].value=(v===undefined||v===null)?'':v;
+      /* у select без сохранённого значения показываем первый вариант — тот же, что берёт расчёт */
+      if(nodes[i].tagName==='SELECT'&&nodes[i].selectedIndex<0)nodes[i].selectedIndex=0;
       if(nodes[i].classList.contains('ta'))grow(nodes[i]);
     }
     var segs=app.querySelectorAll('.seg');
