@@ -23,25 +23,17 @@
     <div class="topbar-tools">
       <select id="charSelect" class="fld sel" aria-label="Персонаж"></select>
       <button class="btn" data-act="newChar">+ Персонаж</button>
-      <button class="btn" data-act="menu">Ещё</button>
+      <button class="btn" data-act="menu">Sync</button>
     </div>
     <div id="status" class="status">Загружаю…</div>
   </header>
 
   <div id="menu" class="menu" hidden>
-    <button class="btn" data-act="theme">Сменить тему</button>
-    <button class="btn" data-act="cloud">Облако (GitHub)</button>
-    <button class="btn" data-act="export">Сохранить копию в файл</button>
-    <button class="btn" data-act="import">Загрузить из файла</button>
-    <button class="btn danger" data-act="delChar">Удалить этого персонажа</button>
-    <input type="file" id="importFile" accept="application/json,.json" hidden>
-  </div>
-
-  <div id="cloud" class="cloud" hidden>
+    <div class="menu-sep">Облако (GitHub)</div>
     <div class="row">
       <button class="btn" data-act="cloudPull">Взять из облака</button>
       <button class="btn" data-act="cloudPush">Отправить в облако</button>
-      <label class="hint" style="display:flex;align-items:center;gap:6px;">
+      <label class="hint chk">
         <input type="checkbox" id="cloudAuto"> автосинхронизация
       </label>
     </div>
@@ -63,6 +55,15 @@
       Токен хранится только в этом браузере. Персонажи объединяются по времени последнего изменения:
       где правили позже — та версия и побеждает. Удаление персонажа на другом устройстве не переносится.
     </div>
+
+    <div class="menu-sep">Файл и вид</div>
+    <div class="row">
+      <button class="btn" data-act="theme">Сменить тему</button>
+      <button class="btn" data-act="export">Сохранить копию в файл</button>
+      <button class="btn" data-act="import">Загрузить из файла</button>
+      <button class="btn danger" data-act="delChar">Удалить этого персонажа</button>
+      <input type="file" id="importFile" accept="application/json,.json" hidden>
+    </div>
   </div>
 
   <nav class="tabs" id="tabs">
@@ -83,6 +84,14 @@
         <div class="calcrow">
           <div class="medal"><div class="medal-num" id="acTotal">10</div><div class="medal-cap">КБ</div></div>
           <div class="calcfields">
+            <div class="segwrap wide"><span class="lbl">Тип брони</span>
+              <div class="chips" data-choice="ac.type">
+                <button type="button" data-choice-path="ac.type" data-v="none">Без брони</button>
+                <button type="button" data-choice-path="ac.type" data-v="light">Лёгкая</button>
+                <button type="button" data-choice-path="ac.type" data-v="medium">Средняя</button>
+                <button type="button" data-choice-path="ac.type" data-v="heavy">Тяжёлая</button>
+              </div>
+            </div>
             <div class="segwrap"><span class="lbl">Умение брони</span><div class="seg" data-seg="ac.rank"></div></div>
             <label class="f"><span class="lbl">Предмет</span><input class="fld num" inputmode="numeric" data-bind="ac.item"></label>
             <label class="f"><span class="lbl">Макс. ЛВК</span><input class="fld num" inputmode="numeric" data-bind="ac.cap" placeholder="—"></label>
@@ -318,6 +327,8 @@
   }
   #app *{box-sizing:border-box;}
   #app input,#app textarea,#app select,#app button{font-family:inherit;color:inherit;}
+  /* активные кнопки — светлый текст на тёмном; специфичнее правила выше */
+  #app .tab.on,#app .seg button.on,#app .chips button.on{color:var(--barText);}
 
   .topbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:10px;}
   .brand{display:flex;align-items:baseline;gap:8px;margin-right:auto;}
@@ -331,13 +342,14 @@
   .btn.danger{border-color:var(--blood);color:var(--blood);}
   .btn.blood{border-color:var(--blood);}
   .btn.heal{border-color:var(--heal);}
-  .menu{display:flex;flex-wrap:wrap;gap:6px;padding:10px;background:var(--panel);border:1px solid var(--line);border-radius:4px;margin-bottom:10px;}
-
-  .cloud{padding:10px;background:var(--panel);border:1px solid var(--line);border-radius:4px;margin-bottom:10px;display:flex;flex-direction:column;gap:8px;}
-  .cloud .row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
-  .cloud .row .fld{flex:1 1 140px;min-width:0;}
-  .cloud .hint{font-size:11px;color:var(--muted);line-height:1.5;}
-  .cloud .hint a{color:inherit;}
+  .menu{display:flex;flex-direction:column;gap:8px;padding:10px;background:var(--panel);border:1px solid var(--line);border-radius:4px;margin-bottom:10px;}
+  .menu .row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+  .menu .row .fld{flex:1 1 140px;min-width:0;}
+  .menu-sep{font:600 10px/1 Georgia,serif;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:6px;}
+  .menu-sep+.row{margin-top:-2px;}
+  .menu .hint{font-size:11px;color:var(--muted);line-height:1.5;}
+  .menu .hint a{color:inherit;}
+  .menu .hint.chk{display:flex;align-items:center;gap:6px;}
 
   .tabs{display:flex;gap:4px;overflow-x:auto;padding-bottom:6px;margin-bottom:10px;-webkit-overflow-scrolling:touch;}
   .tab{flex:0 0 auto;background:transparent;border:1px solid var(--line);border-radius:3px;padding:10px 14px;font:600 12px/1 Georgia,serif;letter-spacing:.12em;text-transform:uppercase;min-height:42px;cursor:pointer;}
@@ -389,11 +401,17 @@
   .medal-num{height:76px;border-radius:50%;border:3px double var(--bar);background:var(--field);display:flex;align-items:center;justify-content:center;font:700 28px/1 Georgia,serif;font-variant-numeric:tabular-nums;}
   .medal-cap{font:600 9px/1.3 -apple-system,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:5px;}
   .calcfields{flex:1 1 260px;display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;align-items:end;}
+  .calcfields .segwrap{grid-column:span 2;}
+  .calcfields .segwrap.wide{grid-column:1/-1;}
   .formula{grid-column:1/-1;font:11px/1.4 ui-monospace,Menlo,monospace;color:var(--muted);}
 
   .segwrap{min-width:0;}
   .seg{display:flex;gap:2px;}
-  .seg button{flex:1;min-width:30px;min-height:42px;border:1px solid var(--line);background:var(--field);font:600 12px/1 Georgia,serif;cursor:pointer;padding:0;}
+  .seg button{flex:1 1 0;min-width:0;min-height:42px;border:1px solid var(--line);background:var(--field);font:600 12px/1 Georgia,serif;cursor:pointer;padding:0;}
+
+  .chips{display:flex;flex-wrap:wrap;gap:6px;}
+  .chips button{flex:1 1 auto;min-width:0;min-height:42px;padding:0 10px;border:1px solid var(--line);border-radius:3px;background:var(--field);font:600 12px/1 -apple-system,sans-serif;letter-spacing:.04em;cursor:pointer;}
+  .chips button.on{background:var(--bar);color:var(--barText);border-color:var(--bar);}
   .seg button:first-child{border-radius:3px 0 0 3px;}
   .seg button:last-child{border-radius:0 3px 3px 0;}
   .seg button.on{background:var(--bar);color:var(--barText);border-color:var(--bar);}
@@ -409,9 +427,15 @@
     .skill-name{grid-area:n;} .skill .seg{grid-area:s;} .skill .item{grid-area:i;} .skill .tot{grid-area:t;}
   }
 
-  .strike{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;padding:10px;border:1px solid var(--line);border-radius:3px;background:var(--field);}
+  .strike{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:10px;padding:10px;border:1px solid var(--line);border-radius:3px;background:var(--field);align-items:end;}
   .strike .wide{grid-column:1/-1;}
+  .strike .segwrap{grid-column:span 2;}
   .strike .tot{padding:12px 0;}
+  .strike .dmgline{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;border-top:1px dotted var(--line);padding-top:8px;}
+  .strike .dmgline .lbl{margin:0;}
+  .strike .dmgval{font:700 17px/1 Georgia,serif;font-variant-numeric:tabular-nums;}
+  .strike .dmgnote{font:11px/1.4 ui-monospace,Menlo,monospace;color:var(--muted);}
+  .strike .fld{background:var(--panel);}
   .prof-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;}
   .slots{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:8px;}
   .slot{border:1px solid var(--line);border-radius:3px;background:var(--field);padding:6px;text-align:center;}
@@ -435,6 +459,9 @@
     ['craf','Ремесло','int',0],['stea','Скрытность','dex',1]];
   var SAVES=[['fort','Стойкость','con'],['ref','Реакция','dex'],['will','Воля','wis'],['perc','Восприятие','wis']];
   var WPROF=[['simple','Простое'],['martial','Особое'],['adv','Прочее'],['unarmed','Безоружное']];
+  var DICE=[4,6,8,10,12];
+  var DMGT=[['b','Д','дробящий'],['p','К','колющий'],['s','Р','режущий']];
+  var ARMOR=[['none','Без брони',null],['light','Лёгкая',4],['medium','Средняя',2],['heavy','Тяжёлая',0]];
 
   var blob={v:1,active:null,chars:{}};
   var saveTimer=null, hasStore=!!(window.storage&&window.storage.get), freshId=null;
@@ -476,6 +503,27 @@
     if(!blob.active&&hasLocal){try{var l=window.localStorage.getItem(KEY);if(l)blob=JSON.parse(l);}catch(e){}}
     if(!blob.chars||!Object.keys(blob.chars).length){blob={v:1,active:null,chars:{}};var id=uid();blob.chars[id]=blank();blob.active=id;freshId=id;}
     if(!blob.chars[blob.active])blob.active=Object.keys(blob.chars)[0];
+    Object.keys(blob.chars).forEach(function(id){migrate(blob.chars[id]);});
+  }
+
+  /* старое текстовое поле урона («1к8+4 рубящий») раскладываем по новым полям */
+  function migrate(c){
+    if(!c)return;
+    ['melee','ranged'].forEach(function(kind){
+      var arr=c[kind];if(!arr)return;
+      for(var i=0;i<arr.length;i++){
+        var w=arr[i];if(!w||typeof w!=='object')continue;
+        if(!w.dmg||w.dcount!=null&&w.dcount!=='')continue;
+        var s=String(w.dmg);
+        var m=s.match(/(\d+)\s*[кkдd]\s*(\d+)/i);
+        if(m){w.dcount=num(m[1]);w.ddie=num(m[2]);}
+        var b=s.replace(/(\d+)\s*[кkдd]\s*(\d+)/i,'').match(/([+\-]\s*\d+)/);
+        if(b)w.dbonus=num(b[1].replace(/\s+/g,''));
+        if(/дроб/i.test(s))w.dtype='b';
+        else if(/кол/i.test(s))w.dtype='p';
+        else if(/реж|руб|сек/i.test(s))w.dtype='s';
+      }
+    });
   }
 
   /* ---------- облако: JSON-файл в репозитории GitHub ---------- */
@@ -518,7 +566,7 @@
     Object.keys(remote.chars).forEach(function(id){
       var rc=remote.chars[id];
       if(!rc||typeof rc!=='object')return;
-      if(!blob.chars[id]||ts(rc)>ts(blob.chars[id])){blob.chars[id]=rc;n++;}
+      if(!blob.chars[id]||ts(rc)>ts(blob.chars[id])){migrate(rc);blob.chars[id]=rc;n++;}
     });
     /* если на этом устройстве был только что созданный пустой бланк — убираем его в пользу облачных */
     if(n&&freshId&&blob.chars[freshId]&&!ts(blob.chars[freshId])&&Object.keys(blob.chars).length>1){
@@ -615,14 +663,23 @@
     var abilSel=kind==='melee'
       ? '<label class="f"><span class="lbl">Характеристика</span><select class="fld sel" data-bind="'+kind+'.'+i+'.abil"><option value="str">СИЛ</option><option value="dex">ЛВК (фехт.)</option></select></label>'
       : '<label class="f"><span class="lbl">Характеристика</span><select class="fld sel" data-bind="'+kind+'.'+i+'.abil"><option value="dex">ЛВК</option><option value="str">СИЛ</option></select></label>';
+    var p=kind+'.'+i;
     return '<div class="strike">'+
-      '<label class="f wide"><span class="lbl">Оружие</span><input class="fld" data-bind="'+kind+'.'+i+'.name"></label>'+
+      '<label class="f wide"><span class="lbl">Оружие</span><input class="fld" data-bind="'+p+'.name"></label>'+
       '<div class="f"><span class="lbl">Атака</span><div class="tot" id="tot-'+kind+i+'">+0</div></div>'+
-      '<div class="segwrap"><span class="lbl">Умение</span><div class="seg" data-seg="'+kind+'.'+i+'.rank"></div></div>'+
-      '<label class="f"><span class="lbl">Предмет</span><input class="fld num" inputmode="numeric" data-bind="'+kind+'.'+i+'.item"></label>'+
+      '<div class="segwrap"><span class="lbl">Умение</span><div class="seg" data-seg="'+p+'.rank"></div></div>'+
+      '<label class="f"><span class="lbl">Предмет</span><input class="fld num" inputmode="numeric" data-bind="'+p+'.item"></label>'+
       abilSel+
-      '<label class="f"><span class="lbl">Урон</span><input class="fld" placeholder="1к8+4 рубящий" data-bind="'+kind+'.'+i+'.dmg"></label>'+
-      '<label class="f wide"><span class="lbl">Дескрипторы и примечания</span><input class="fld" data-bind="'+kind+'.'+i+'.traits"></label>'+
+      '<label class="f"><span class="lbl">Кол-во</span><input class="fld num" inputmode="numeric" placeholder="1" data-bind="'+p+'.dcount"></label>'+
+      '<label class="f"><span class="lbl">Кость</span><select class="fld sel" data-bind="'+p+'.ddie"><option value="">—</option>'+
+        DICE.map(function(d){return '<option value="'+d+'">к'+d+'</option>';}).join('')+'</select></label>'+
+      '<label class="f"><span class="lbl">Бонус урона</span><input class="fld num" inputmode="numeric" placeholder="хар." data-bind="'+p+'.dbonus"></label>'+
+      '<div class="segwrap"><span class="lbl">Тип урона</span><div class="chips">'+
+        DMGT.map(function(t){return '<button type="button" data-choice-path="'+p+'.dtype" data-v="'+t[0]+'" title="'+t[2]+'">'+t[1]+'</button>';}).join('')+
+      '</div></div>'+
+      '<div class="dmgline"><span class="lbl">Урон</span><span class="dmgval" id="dmg-'+kind+i+'">—</span>'+
+        '<span class="dmgnote" id="dmgn-'+kind+i+'"></span></div>'+
+      '<label class="f wide"><span class="lbl">Дескрипторы и примечания</span><input class="fld" data-bind="'+p+'.traits"></label>'+
       '</div>';
   }
   document.getElementById('meleeGrid').innerHTML=[0,1,2].map(function(i){return strikeHTML('melee',i);}).join('');
@@ -655,7 +712,15 @@
       var bs=segs[j].querySelectorAll('button');
       for(var k=0;k<bs.length;k++)bs[k].classList.toggle('on',k===val);
     }
+    fillChips();
     refresh();
+  }
+  function fillChips(){
+    var ch=app.querySelectorAll('.chips button');
+    for(var i=0;i<ch.length;i++){
+      var cur=get(ch[i].dataset.choicePath);
+      ch[i].classList.toggle('on',cur===ch[i].dataset.v);
+    }
   }
   function grow(t){t.style.height='auto';t.style.height=Math.max(t.scrollHeight+2,60)+'px';}
 
@@ -667,7 +732,9 @@
     var acP=prof(get('ac.rank'));
     var ac=10+dex+acP+num(get('ac.item'))+num(get('ac.misc'));
     document.getElementById('acTotal').textContent=ac;
-    document.getElementById('acFormula').textContent='10 + ЛВК '+sign(dex)+' + умение '+sign(acP)+' + предмет '+sign(num(get('ac.item')))+' + прочее '+sign(num(get('ac.misc')));
+    var at=get('ac.type'), atRow=ARMOR.filter(function(a){return a[0]===at;})[0];
+    document.getElementById('acFormula').textContent='10 + ЛВК '+sign(dex)+' + умение '+sign(acP)+' + предмет '+sign(num(get('ac.item')))+' + прочее '+sign(num(get('ac.misc')))+
+      (atRow?('   ·   '+atRow[1].toLowerCase()+(atRow[2]==null?', предел ЛВК не ограничен':', обычный предел ЛВК +'+atRow[2])):'');
 
     SAVES.forEach(function(s){
       var t=mod(s[2])+prof(get('saves.'+s[0]+'.rank'))+num(get('saves.'+s[0]+'.item'));
@@ -683,9 +750,25 @@
 
     ['melee','ranged'].forEach(function(kind){
       for(var i=0;i<3;i++){
-        var ab=get(kind+'.'+i+'.abil')||(kind==='melee'?'str':'dex');
-        var t=mod(ab)+prof(get(kind+'.'+i+'.rank'))+num(get(kind+'.'+i+'.item'));
+        var p=kind+'.'+i;
+        var ab=get(p+'.abil')||(kind==='melee'?'str':'dex');
+        var t=mod(ab)+prof(get(p+'.rank'))+num(get(p+'.item'));
         document.getElementById('tot-'+kind+i).textContent=sign(t);
+
+        var cnt=num(get(p+'.dcount'));
+        var die=num(get(p+'.ddie'));
+        var braw=get(p+'.dbonus');
+        var auto=(braw===''||braw==null);
+        var bon=auto?(kind==='melee'?mod(ab):0):num(braw);
+        var tp=DMGT.filter(function(d){return d[0]===get(p+'.dtype');})[0];
+        var vEl=document.getElementById('dmg-'+kind+i), nEl=document.getElementById('dmgn-'+kind+i);
+        if(cnt>0&&die>0){
+          vEl.textContent=(cnt+bon)+'–'+(cnt*die+bon)+(tp?' '+tp[2]:'');
+          nEl.textContent=cnt+'к'+die+(bon?sign(bon):'')+(auto&&bon?' (бонус от характеристики)':'');
+        }else{
+          vEl.textContent='—';
+          nEl.textContent='укажите кол-во и кость';
+        }
       }
     });
 
@@ -736,6 +819,22 @@
       for(var i=0;i<sibs.length;i++)sibs[i].classList.toggle('on',sibs[i]===t);
       refresh();return;
     }
+    if(t.dataset.choicePath!==undefined){
+      var path=t.dataset.choicePath;
+      var v=(get(path)===t.dataset.v)?'':t.dataset.v;
+      set(path,v);
+      var sib=t.parentNode.querySelectorAll('button');
+      for(var c=0;c<sib.length;c++)sib[c].classList.toggle('on',sib[c]===t&&v!=='');
+      if(path==='ac.type'){
+        var row=ARMOR.filter(function(a){return a[0]===v;})[0];
+        var capNow=get('ac.cap');
+        if(row&&(capNow===''||capNow==null)&&row[2]!=null){
+          set('ac.cap',row[2]);
+          var capIn=app.querySelector('[data-bind="ac.cap"]');if(capIn)capIn.value=row[2];
+        }
+      }
+      refresh();return;
+    }
     if(t.dataset.hero!==undefined){
       var v=num(t.dataset.hero); if(num(get('hero'))===v)v=v-1;
       set('hero',v);refresh();return;
@@ -747,7 +846,7 @@
       window.scrollTo(0,0);return;
     }
     var a=t.dataset.act;
-    if(a==='menu'){var m=document.getElementById('menu');m.hidden=!m.hidden;}
+    if(a==='menu'){var m=document.getElementById('menu');m.hidden=!m.hidden;if(!m.hidden)cloudFillForm();}
     else if(a==='theme'){app.classList.toggle('night');}
     else if(a==='newChar'){var id=uid();blob.chars[id]=blank();blob.active=id;renderCharList();fill();queueSave();}
     else if(a==='delChar'){
@@ -765,7 +864,6 @@
       setTimeout(function(){URL.revokeObjectURL(url);},1000);status('Копия выгружена');
     }
     else if(a==='import'){document.getElementById('importFile').click();}
-    else if(a==='cloud'){var c=document.getElementById('cloud');c.hidden=!c.hidden;if(!c.hidden)cloudFillForm();}
     else if(a==='cloudPull'){cloudPull(false);}
     else if(a==='cloudPush'){cloudPush(false);}
     else if(a==='cloudSaveToken'){
