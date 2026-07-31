@@ -309,7 +309,7 @@
       </div>
     </section>
   </main>
-  <footer class="foot">Значения сохраняются автоматически. Кнопка «Ещё» → «Сохранить копию в файл» делает резервную копию.</footer>
+  <footer class="foot">Значения сохраняются автоматически. Кнопка «Sync» → «Сохранить копию в файл» делает резервную копию.</footer>
 </div>
 
 <style>
@@ -453,7 +453,7 @@
 (function(){
   var app=document.getElementById('app');
   var KEY='pf2-sheet-v1';
-  var BUILD='2026-07-31 · 4';
+  var BUILD='2026-07-31 · 5';
   var RANKS=[['Н',0],['И',2],['Э',4],['М',6],['Л',8]];
   var ABIL=[['str','СИЛ','Сила'],['dex','ЛВК','Ловкость'],['con','ВЫН','Выносливость'],['int','ИНТ','Интеллект'],['wis','МДР','Мудрость'],['cha','ХАР','Харизма']];
   var SKILLS=[['acro','Акробатика','dex',1],['athl','Атлетика','str',1],['thie','Воровство','dex',1],['surv','Выживание','wis',0],
@@ -499,7 +499,7 @@
     if(!ok&&hasLocal){
       try{window.localStorage.setItem(KEY,txt);ok=true;}catch(e){}
     }
-    status(ok?('Сохранено в '+stamp()):'Не удалось сохранить. Нажмите «Ещё» → «Сохранить копию в файл»');
+    status(ok?('Сохранено в '+stamp()):'Не удалось сохранить. Нажмите «Sync» → «Сохранить копию в файл»');
     if(ok)queueCloudPush();
   }
   async function load(){
@@ -594,7 +594,7 @@
     finally{cloudBusy=false;}
   }
   async function cloudPush(silent){
-    if(!cloud.token){if(!silent)status('Нужен токен: «Ещё» → «Облако (GitHub)»');return;}
+    if(!cloud.token){if(!silent)status('Нужен токен: откройте «Sync» и вставьте его в поле токена');return;}
     if(cloudBusy)return;
     cloudBusy=true;
     try{
