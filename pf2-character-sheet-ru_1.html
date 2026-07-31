@@ -218,12 +218,18 @@
 
     <!-- СНАРЯЖЕНИЕ -->
     <section class="pane" data-pane="gear">
-      <div class="bar">Носимые предметы</div>
-      <div class="panel"><textarea class="fld ta" data-bind="itemsWorn" rows="10"></textarea></div>
-      <div class="bar">Готовые предметы</div>
-      <div class="panel"><textarea class="fld ta" data-bind="itemsReady" rows="5"></textarea></div>
-      <div class="bar">Прочие предметы</div>
-      <div class="panel"><textarea class="fld ta" data-bind="itemsOther" rows="5"></textarea></div>
+      <button type="button" class="bar fold" data-fold="itemsWorn" aria-expanded="true" aria-controls="box-itemsWorn">
+        <span class="bar-title">Носимые предметы</span><span class="bar-note" id="cnt-itemsWorn"></span><span class="chev" aria-hidden="true">▾</span>
+      </button>
+      <div class="panel items" id="box-itemsWorn"></div>
+      <button type="button" class="bar fold" data-fold="itemsReady" aria-expanded="true" aria-controls="box-itemsReady">
+        <span class="bar-title">Готовые предметы</span><span class="bar-note" id="cnt-itemsReady"></span><span class="chev" aria-hidden="true">▾</span>
+      </button>
+      <div class="panel items" id="box-itemsReady"></div>
+      <button type="button" class="bar fold" data-fold="itemsOther" aria-expanded="true" aria-controls="box-itemsOther">
+        <span class="bar-title">Прочие предметы</span><span class="bar-note" id="cnt-itemsOther"></span><span class="chev" aria-hidden="true">▾</span>
+      </button>
+      <div class="panel items" id="box-itemsOther"></div>
       <div class="bar">Вес и деньги</div>
       <div class="panel">
         <div class="hprow small">
@@ -365,6 +371,30 @@
   .bar:first-child{margin-top:0;}
   .panel{background:var(--panel);border:1px solid var(--line);border-top:none;border-radius:0 0 3px 3px;padding:12px;display:flex;flex-direction:column;gap:10px;}
 
+  /* сворачиваемый заголовок; #app — чтобы перебить общее правило цвета кнопок */
+  #app .bar.fold{display:flex;align-items:center;gap:8px;width:100%;text-align:left;border:0;min-height:42px;cursor:pointer;color:var(--barText);}
+  .bar.fold .bar-title{flex:1 1 auto;min-width:0;}
+  .bar.fold .bar-note{flex:0 0 auto;font:600 10px/1 -apple-system,sans-serif;letter-spacing:.08em;text-transform:none;opacity:.7;}
+  .bar.fold .chev{flex:0 0 auto;font-size:12px;line-height:1;transition:transform .15s ease;}
+  .bar.fold.closed{border-radius:3px;}
+  .bar.fold.closed .chev{transform:rotate(-90deg);}
+
+  /* строки предметов */
+  .items{gap:8px;}
+  .item-row{display:grid;grid-template-columns:minmax(0,1fr) 84px 74px 44px;gap:8px;align-items:end;}
+  .item-row+.item-row .lbl{display:none;}
+  #app .item-del{background:var(--field);border:1px solid var(--line);border-radius:3px;color:var(--muted);font:400 20px/1 Georgia,serif;min-height:42px;cursor:pointer;padding:0;}
+  .item-del:active{transform:translateY(1px);}
+  #app .item-del:hover{color:var(--blood);border-color:var(--blood);}
+  #app .item-add{background:transparent;border:1px dashed var(--line);border-radius:3px;color:var(--muted);font:600 12px/1 -apple-system,sans-serif;letter-spacing:.06em;min-height:42px;cursor:pointer;}
+  .item-add:active{transform:translateY(1px);}
+  .item-empty{font-size:12px;color:var(--muted);font-style:italic;}
+  @media (max-width:460px){
+    .item-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 44px;}
+    .item-row .f.iname{grid-column:1/-1;}
+    .item-row+.item-row .lbl{display:block;}
+  }
+
   .lbl{display:block;font:600 9.5px/1.3 -apple-system,sans-serif;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
   .f{display:block;min-width:0;}
   .f.inline{display:flex;align-items:center;gap:10px;}
@@ -453,7 +483,7 @@
 (function(){
   var app=document.getElementById('app');
   var KEY='pf2-sheet-v1';
-  var BUILD='2026-07-31 · 5';
+  var BUILD='2026-08-01 · 6';
   var RANKS=[['Н',0],['И',2],['Э',4],['М',6],['Л',8]];
   var ABIL=[['str','СИЛ','Сила'],['dex','ЛВК','Ловкость'],['con','ВЫН','Выносливость'],['int','ИНТ','Интеллект'],['wis','МДР','Мудрость'],['cha','ХАР','Харизма']];
   var SKILLS=[['acro','Акробатика','dex',1],['athl','Атлетика','str',1],['thie','Воровство','dex',1],['surv','Выживание','wis',0],
@@ -466,12 +496,13 @@
   var DICE=[4,6,8,10,12];
   var DMGT=[['b','Д','дробящий'],['p','К','колющий'],['s','Р','режущий']];
   var ARMOR=[['none','Без брони',null],['light','Лёгкая',4],['medium','Средняя',2],['heavy','Тяжёлая',0]];
+  var ITEMS=['itemsWorn','itemsReady','itemsOther'];
 
   var blob={v:1,active:null,chars:{}};
   var saveTimer=null, hasStore=!!(window.storage&&window.storage.get), freshId=null;
 
   function uid(){return 'c'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
-  function blank(){return {name:'Новый персонаж',level:1,abil:{str:10,dex:10,con:10,int:10,wis:10,cha:10},hp:{},ac:{},shield:{},saves:{},classdc:{key:'str'},skills:{},melee:[{},{},{}],ranged:[{},{},{}],wprof:{},spell:{key:'int'},slots:{},focus:{},coin:{},bio:{}};}
+  function blank(){return {name:'Новый персонаж',level:1,abil:{str:10,dex:10,con:10,int:10,wis:10,cha:10},hp:{},ac:{},shield:{},saves:{},classdc:{key:'str'},skills:{},melee:[{},{},{}],ranged:[{},{},{}],wprof:{},spell:{key:'int'},slots:{},focus:{},coin:{},bio:{},itemsWorn:[],itemsReady:[],itemsOther:[]};}
   function S(){return blob.chars[blob.active];}
   function get(p){var o=S();var ks=p.split('.');for(var i=0;i<ks.length;i++){if(o==null)return undefined;o=o[ks[i]];}return o;}
   function set(p,v){var o=S();var ks=p.split('.');for(var i=0;i<ks.length-1;i++){if(o[ks[i]]==null)o[ks[i]]={};o=o[ks[i]];}o[ks[ks.length-1]]=v;queueSave();}
@@ -513,6 +544,20 @@
   /* старое текстовое поле урона («1к8+4 рубящий») раскладываем по новым полям */
   function migrate(c){
     if(!c)return;
+    /* снаряжение: одно текстовое поле → строки «название · вес · количество» */
+    ITEMS.forEach(function(key){
+      if(Array.isArray(c[key]))return;
+      var rows=[],raw=c[key];
+      if(typeof raw==='string'&&raw.trim()){
+        raw.split(/\r?\n/).forEach(function(line){
+          var s=line.trim();if(!s)return;
+          var q='',m=s.match(/[х×xX]\s*(\d+)\s*$/);
+          if(m){q=m[1];s=s.slice(0,m.index).replace(/[\s,;·—-]+$/,'');}
+          rows.push({name:s,bulk:'',qty:q});
+        });
+      }
+      c[key]=rows;
+    });
     ['melee','ranged'].forEach(function(kind){
       var arr=c[kind];if(!arr)return;
       for(var i=0;i<arr.length;i++){
@@ -703,9 +748,90 @@
   document.getElementById('slotGrid').innerHTML=slotHTML;
   buildSegs();
 
+  /* ---------- снаряжение: строки предметов ---------- */
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
+  function itemArr(key){
+    var a=get(key);
+    if(!Array.isArray(a)){a=[];var c=S();if(c)c[key]=a;}
+    return a;
+  }
+  function plural(n,f1,f2,f5){
+    var t=n%100;if(t>=11&&t<=14)return f5;
+    t=n%10;if(t===1)return f1;if(t>=2&&t<=4)return f2;return f5;
+  }
+  function itemsHTML(key){
+    var arr=itemArr(key);
+    var rows=arr.map(function(it,i){
+      var p=key+'.'+i;
+      var nm=(it&&it.name?String(it.name):'').trim();
+      return '<div class="item-row">'+
+        '<label class="f iname"><span class="lbl">Название</span>'+
+          '<input class="fld" placeholder="Название" data-bind="'+p+'.name"></label>'+
+        '<label class="f"><span class="lbl">Вес</span>'+
+          '<input class="fld num" placeholder="—" data-bind="'+p+'.bulk"></label>'+
+        '<label class="f"><span class="lbl">Кол-во</span>'+
+          '<input class="fld num" inputmode="numeric" placeholder="1" data-bind="'+p+'.qty"></label>'+
+        '<button type="button" class="item-del" data-item-del="'+key+'" data-i="'+i+'" '+
+          'title="Удалить" aria-label="Удалить предмет'+(nm?' «'+esc(nm)+'»':'')+'">×</button>'+
+      '</div>';
+    }).join('');
+    if(!rows)rows='<div class="item-empty">Пока пусто — добавьте первый предмет</div>';
+    return rows+'<button type="button" class="item-add" data-item-add="'+key+'">+ Добавить предмет</button>';
+  }
+  function itemCount(key){
+    var n=itemArr(key).length;
+    var el=document.getElementById('cnt-'+key);
+    if(el)el.textContent=n?(n+' '+plural(n,'предмет','предмета','предметов')):'';
+  }
+  function renderItems(key,focusLast){
+    var box=document.getElementById('box-'+key);
+    if(!box)return;
+    box.innerHTML=itemsHTML(key);
+    fillBinds(box);
+    itemCount(key);
+    if(focusLast){
+      var ins=box.querySelectorAll('.item-row .iname input');
+      if(ins.length)ins[ins.length-1].focus();
+    }
+  }
+  function addItem(key){
+    itemArr(key).push({name:'',bulk:'',qty:''});
+    queueSave();renderItems(key,true);
+  }
+  function delItem(key,i){
+    var arr=itemArr(key),it=arr[i];
+    if(!it)return;
+    var nm=(it.name||'').trim();
+    if(nm&&!confirm('Удалить «'+nm+'»?'))return;
+    arr.splice(i,1);queueSave();renderItems(key,false);
+  }
+
+  /* ---------- свёрнутые разделы (настройка вида, не данные персонажа) ---------- */
+  var UIKEY='pf2-ui-v1',ui={folds:{}};
+  function uiRead(){
+    if(!hasLocal)return;
+    try{var r=window.localStorage.getItem(UIKEY);if(r){var o=JSON.parse(r);if(o&&o.folds)ui.folds=o.folds;}}catch(e){}
+  }
+  function uiWrite(){
+    if(!hasLocal)return;
+    try{window.localStorage.setItem(UIKEY,JSON.stringify(ui));}catch(e){}
+  }
+  function applyFold(key){
+    var bar=app.querySelector('[data-fold="'+key+'"]'),box=document.getElementById('box-'+key);
+    if(!bar||!box)return;
+    var closed=!!ui.folds[key];
+    bar.classList.toggle('closed',closed);
+    bar.setAttribute('aria-expanded',closed?'false':'true');
+    box.hidden=closed;
+  }
+  function toggleFold(key){
+    ui.folds[key]=!ui.folds[key];uiWrite();applyFold(key);
+  }
+  uiRead();
+
   /* ---------- отрисовка значений ---------- */
-  function fill(){
-    var nodes=app.querySelectorAll('[data-bind]');
+  function fillBinds(root){
+    var nodes=root.querySelectorAll('[data-bind]');
     for(var i=0;i<nodes.length;i++){
       var v=get(nodes[i].dataset.bind);
       nodes[i].value=(v===undefined||v===null)?'':v;
@@ -713,6 +839,14 @@
       if(nodes[i].tagName==='SELECT'&&nodes[i].selectedIndex<0)nodes[i].selectedIndex=0;
       if(nodes[i].classList.contains('ta'))grow(nodes[i]);
     }
+  }
+  function fill(){
+    ITEMS.forEach(function(key){
+      var box=document.getElementById('box-'+key);
+      if(box)box.innerHTML=itemsHTML(key);
+      itemCount(key);applyFold(key);
+    });
+    fillBinds(app);
     var segs=app.querySelectorAll('.seg');
     for(var j=0;j<segs.length;j++){
       var val=num(get(segs[j].dataset.seg));
@@ -820,6 +954,9 @@
   });
   app.addEventListener('click',function(e){
     var t=e.target.closest('button');if(!t)return;
+    if(t.dataset.fold!==undefined){toggleFold(t.dataset.fold);return;}
+    if(t.dataset.itemAdd!==undefined){addItem(t.dataset.itemAdd);return;}
+    if(t.dataset.itemDel!==undefined){delItem(t.dataset.itemDel,num(t.dataset.i));return;}
     if(t.dataset.segPath!==undefined){
       set(t.dataset.segPath,num(t.dataset.v));
       var sibs=t.parentNode.querySelectorAll('button');
@@ -896,7 +1033,7 @@
       try{
         var inc=JSON.parse(rd.result);
         if(!inc.chars)throw 0;
-        Object.keys(inc.chars).forEach(function(id){blob.chars[id]=inc.chars[id];});
+        Object.keys(inc.chars).forEach(function(id){migrate(inc.chars[id]);blob.chars[id]=inc.chars[id];});
         blob.active=inc.active&&blob.chars[inc.active]?inc.active:Object.keys(blob.chars)[0];
         renderCharList();fill();queueSave();status('Файл загружен');
       }catch(err){status('Не получилось прочитать файл — нужен JSON, выгруженный отсюда же');}
