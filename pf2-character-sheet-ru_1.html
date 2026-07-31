@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Бланк PF2">
+<meta name="theme-color" content="#E4DCC8">
+<title>Бланк персонажа Pathfinder 2e</title>
+<style>
+  html{background:#E4DCC8;}
+  body{margin:0;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);background:#E4DCC8;}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">PF2</span>
+      <span class="brand-name">Бланк персонажа</span>
+    </div>
+    <div class="topbar-tools">
+      <select id="charSelect" class="fld sel" aria-label="Персонаж"></select>
+      <button class="btn" data-act="newChar">+ Персонаж</button>
+      <button class="btn" data-act="menu">Ещё</button>
+    </div>
+    <div id="status" class="status">Загружаю…</div>
+  </header>
+
+  <div id="menu" class="menu" hidden>
+    <button class="btn" data-act="theme">Сменить тему</button>
+    <button class="btn" data-act="export">Сохранить копию в файл</button>
+    <button class="btn" data-act="import">Загрузить из файла</button>
+    <button class="btn danger" data-act="delChar">Удалить этого персонажа</button>
+    <input type="file" id="importFile" accept="application/json,.json" hidden>
+  </div>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab on" data-tab="main">Основное</button>
+    <button class="tab" data-tab="skills">Навыки</button>
+    <button class="tab" data-tab="combat">Бой</button>
+    <button class="tab" data-tab="feats">Черты</button>
+    <button class="tab" data-tab="gear">Снаряжение</button>
+    <button class="tab" data-tab="magic">Магия</button>
+    <button class="tab" data-tab="story">Персонаж</button>
+  </nav>
+
+  <main>
+    <!-- ОСНОВНОЕ -->
+    <section class="pane on" data-pane="main">
+      <div class="bar">Класс брони и щит</div>
+      <div class="panel">
+        <div class="calcrow">
+          <div class="medal"><div class="medal-num" id="acTotal">10</div><div class="medal-cap">КБ</div></div>
+          <div class="calcfields">
+            <div class="segwrap"><span class="lbl">Умение брони</span><div class="seg" data-seg="ac.rank"></div></div>
+            <label class="f"><span class="lbl">Предмет</span><input class="fld num" inputmode="numeric" data-bind="ac.item"></label>
+            <label class="f"><span class="lbl">Макс. ЛВК</span><input class="fld num" inputmode="numeric" data-bind="ac.cap" placeholder="—"></label>
+            <label class="f"><span class="lbl">Прочее</span><input class="fld num" inputmode="numeric" data-bind="ac.misc"></label>
+            <div class="formula" id="acFormula"></div>
+          </div>
+        </div>
+        <div class="hprow small">
+          <label class="f"><span class="lbl">Бонус щита</span><input class="fld num" inputmode="numeric" data-bind="shield.ac"></label>
+          <label class="f"><span class="lbl">Твёрдость</span><input class="fld num" inputmode="numeric" data-bind="shield.hard"></label>
+          <label class="f"><span class="lbl">Макс. ПЗ</span><input class="fld num" inputmode="numeric" data-bind="shield.max"></label>
+          <label class="f"><span class="lbl">Текущие ПЗ</span><input class="fld num" inputmode="numeric" data-bind="shield.cur"></label>
+        </div>
+      </div>
+
+      <div class="bar">Испытания и внимание</div>
+      <div class="panel" id="savesGrid"></div>
+
+      <div class="bar">Классовая СЛ и скорость</div>
+      <div class="panel">
+        <div class="calcrow">
+          <div class="medal"><div class="medal-num" id="classDC">10</div><div class="medal-cap">Классовая СЛ</div></div>
+          <div class="calcfields">
+            <label class="f"><span class="lbl">Ключевая характеристика</span>
+              <select class="fld sel" data-bind="classdc.key">
+                <option value="str">СИЛ</option><option value="dex">ЛВК</option><option value="con">ВЫН</option>
+                <option value="int">ИНТ</option><option value="wis">МДР</option><option value="cha">ХАР</option>
+              </select></label>
+            <div class="segwrap"><span class="lbl">Умение</span><div class="seg" data-seg="classdc.rank"></div></div>
+            <label class="f"><span class="lbl">Предмет</span><input class="fld num" inputmode="numeric" data-bind="classdc.item"></label>
+          </div>
+        </div>
+        <div class="hprow small">
+          <label class="f"><span class="lbl">Скорость, футов</span><input class="fld num" inputmode="numeric" data-bind="speed"></label>
+          <label class="f wide"><span class="lbl">Типы перемещения и примечания</span><input class="fld" data-bind="speedNotes"></label>
+        </div>
+      </div>
+      <div class="bar">Имя и происхождение</div>
+      <div class="panel grid-head">
+        <label class="f wide"><span class="lbl">Имя персонажа</span><input class="fld" data-bind="name"></label>
+        <label class="f"><span class="lbl">Уровень</span><input class="fld num" inputmode="numeric" data-bind="level"></label>
+        <label class="f"><span class="lbl">Народ и родословная</span><input class="fld" data-bind="ancestry"></label>
+        <label class="f"><span class="lbl">Происхождение</span><input class="fld" data-bind="background"></label>
+        <label class="f"><span class="lbl">Класс</span><input class="fld" data-bind="cls"></label>
+        <label class="f"><span class="lbl">Божество</span><input class="fld" data-bind="deity"></label>
+        <label class="f"><span class="lbl">Размер</span><input class="fld" data-bind="size"></label>
+        <label class="f"><span class="lbl">Мировоззрение</span><input class="fld" data-bind="align"></label>
+        <label class="f"><span class="lbl">Дескрипторы</span><input class="fld" data-bind="traits"></label>
+        <label class="f"><span class="lbl">Опыт</span><input class="fld num" inputmode="numeric" data-bind="xp"></label>
+        <div class="f hero">
+          <span class="lbl">Пункты героизма</span>
+          <div class="pips" id="heroPips"></div>
+        </div>
+      </div>
+
+      <div class="bar">Характеристики</div>
+      <div class="panel abil-grid" id="abilGrid"></div>
+
+      <div class="bar">Пункты здоровья</div>
+      <div class="panel">
+        <div class="hpbar" id="hpBar"><div class="hpfill" id="hpFill"></div><div class="hplabel" id="hpLabel">0 / 0</div></div>
+        <div class="hprow">
+          <label class="f"><span class="lbl">Текущие</span><input class="fld num big" inputmode="numeric" data-bind="hp.cur"></label>
+          <label class="f"><span class="lbl">Максимум</span><input class="fld num big" inputmode="numeric" data-bind="hp.max"></label>
+          <label class="f"><span class="lbl">Временные</span><input class="fld num big" inputmode="numeric" data-bind="hp.temp"></label>
+        </div>
+        <div class="hpctl">
+          <button class="btn blood" data-hp="-10">−10</button>
+          <button class="btn blood" data-hp="-5">−5</button>
+          <button class="btn blood" data-hp="-1">−1</button>
+          <input class="fld num" id="hpDelta" inputmode="numeric" placeholder="сколько">
+          <button class="btn blood" data-act="dmg">Урон</button>
+          <button class="btn heal" data-act="heal">Лечение</button>
+          <button class="btn" data-hp="1">+1</button>
+          <button class="btn" data-hp="5">+5</button>
+          <button class="btn" data-hp="10">+10</button>
+        </div>
+        <div class="hprow small">
+          <label class="f"><span class="lbl">При смерти</span><input class="fld num" inputmode="numeric" data-bind="hp.dying"></label>
+          <label class="f"><span class="lbl">Ранение</span><input class="fld num" inputmode="numeric" data-bind="hp.wounded"></label>
+        </div>
+        <label class="f wide"><span class="lbl">Устойчивость и невосприимчивость</span><textarea class="fld ta" data-bind="resist" rows="2"></textarea></label>
+        <label class="f wide"><span class="lbl">Состояния</span><textarea class="fld ta" data-bind="conditions" rows="2"></textarea></label>
+      </div>
+    </section>
+
+    <!-- НАВЫКИ -->
+    <section class="pane" data-pane="skills">
+      <div class="bar">Навыки</div>
+      <div class="panel">
+        <label class="f inline"><span class="lbl">Штраф брони (для навыков с пометкой «броня»)</span><input class="fld num" inputmode="numeric" data-bind="armorPenalty"></label>
+        <div class="skills" id="skillsGrid"></div>
+      </div>
+      <div class="bar">Языки</div>
+      <div class="panel"><textarea class="fld ta" data-bind="langs" rows="3"></textarea></div>
+    </section>
+
+    <!-- БОЙ -->
+    <section class="pane" data-pane="combat">
+      <div class="bar">Удары в ближнем бою</div>
+      <div class="panel" id="meleeGrid"></div>
+      <div class="bar">Дистанционные удары</div>
+      <div class="panel" id="rangedGrid"></div>
+      <div class="bar">Умения в оружии</div>
+      <div class="panel prof-grid" id="wpnProf"></div>
+      <div class="bar">Действия, занятия, ответные действия</div>
+      <div class="panel"><textarea class="fld ta" data-bind="actions" rows="10" placeholder="Название · действия · дескрипторы · условие · описание"></textarea></div>
+    </section>
+
+    <!-- ЧЕРТЫ -->
+    <section class="pane" data-pane="feats">
+      <div class="bar">Черты народа и способности</div>
+      <div class="panel"><textarea class="fld ta" data-bind="featsAncestry" rows="6"></textarea></div>
+      <div class="bar">Классовые черты и способности</div>
+      <div class="panel"><textarea class="fld ta" data-bind="featsClass" rows="10"></textarea></div>
+      <div class="bar">Черты навыков</div>
+      <div class="panel"><textarea class="fld ta" data-bind="featsSkill" rows="6"></textarea></div>
+      <div class="bar">Общие черты</div>
+      <div class="panel"><textarea class="fld ta" data-bind="featsGeneral" rows="4"></textarea></div>
+      <div class="bar">Дополнительные черты</div>
+      <div class="panel"><textarea class="fld ta" data-bind="featsBonus" rows="3"></textarea></div>
+    </section>
+
+    <!-- СНАРЯЖЕНИЕ -->
+    <section class="pane" data-pane="gear">
+      <div class="bar">Носимые предметы</div>
+      <div class="panel"><textarea class="fld ta" data-bind="itemsWorn" rows="10"></textarea></div>
+      <div class="bar">Готовые предметы</div>
+      <div class="panel"><textarea class="fld ta" data-bind="itemsReady" rows="5"></textarea></div>
+      <div class="bar">Прочие предметы</div>
+      <div class="panel"><textarea class="fld ta" data-bind="itemsOther" rows="5"></textarea></div>
+      <div class="bar">Вес и деньги</div>
+      <div class="panel">
+        <div class="hprow small">
+          <label class="f"><span class="lbl">Текущий вес</span><input class="fld num" inputmode="numeric" data-bind="bulk"></label>
+          <div class="f"><span class="lbl">Нагруженность</span><div class="fld ro" id="bulkEnc">5</div></div>
+          <div class="f"><span class="lbl">Максимум</span><div class="fld ro" id="bulkMax">10</div></div>
+        </div>
+        <div class="hprow small">
+          <label class="f"><span class="lbl">ММ</span><input class="fld num" inputmode="numeric" data-bind="coin.cp"></label>
+          <label class="f"><span class="lbl">СМ</span><input class="fld num" inputmode="numeric" data-bind="coin.sp"></label>
+          <label class="f"><span class="lbl">ЗМ</span><input class="fld num" inputmode="numeric" data-bind="coin.gp"></label>
+          <label class="f"><span class="lbl">ПМ</span><input class="fld num" inputmode="numeric" data-bind="coin.pp"></label>
+        </div>
+      </div>
+    </section>
+
+    <!-- МАГИЯ -->
+    <section class="pane" data-pane="magic">
+      <div class="bar">Заклинательство</div>
+      <div class="panel">
+        <div class="calcrow">
+          <div class="medal"><div class="medal-num" id="spellAtk">+0</div><div class="medal-cap">Атака заклинанием</div></div>
+          <div class="medal"><div class="medal-num" id="spellDC">10</div><div class="medal-cap">СЛ заклинаний</div></div>
+          <div class="calcfields">
+            <label class="f"><span class="lbl">Ключевая характеристика</span>
+              <select class="fld sel" data-bind="spell.key">
+                <option value="int">ИНТ</option><option value="wis">МДР</option><option value="cha">ХАР</option>
+                <option value="str">СИЛ</option><option value="dex">ЛВК</option><option value="con">ВЫН</option>
+              </select></label>
+            <div class="segwrap"><span class="lbl">Умение</span><div class="seg" data-seg="spell.rank"></div></div>
+            <label class="f"><span class="lbl">Традиция</span><input class="fld" data-bind="spell.tradition" placeholder="мистическая / первобытная / оккультная / сакральная"></label>
+          </div>
+        </div>
+      </div>
+      <div class="bar">Ячейки заклинаний в день</div>
+      <div class="panel">
+        <label class="f inline"><span class="lbl">Круг фокусов (заговоры)</span><input class="fld num" inputmode="numeric" data-bind="spell.cantripRank"></label>
+        <div class="slots" id="slotGrid"></div>
+      </div>
+      <div class="bar">Фокальные пункты</div>
+      <div class="panel">
+        <div class="hprow small">
+          <label class="f"><span class="lbl">Текущие</span><input class="fld num" inputmode="numeric" data-bind="focus.cur"></label>
+          <label class="f"><span class="lbl">Максимум</span><input class="fld num" inputmode="numeric" data-bind="focus.max"></label>
+        </div>
+        <textarea class="fld ta" data-bind="focusSpells" rows="4" placeholder="Фокальные заклинания"></textarea>
+      </div>
+      <div class="bar">Заклинания</div>
+      <div class="panel"><textarea class="fld ta" data-bind="spells" rows="14" placeholder="Круг · название · действия · подготовлено"></textarea></div>
+      <div class="bar">Врождённые заклинания</div>
+      <div class="panel"><textarea class="fld ta" data-bind="innate" rows="4"></textarea></div>
+    </section>
+
+    <!-- ПЕРСОНАЖ -->
+    <section class="pane" data-pane="story">
+      <div class="bar">Внешность</div>
+      <div class="panel">
+        <div class="grid-head">
+          <label class="f"><span class="lbl">Этнос</span><input class="fld" data-bind="bio.ethnos"></label>
+          <label class="f"><span class="lbl">Национальность</span><input class="fld" data-bind="bio.nation"></label>
+          <label class="f"><span class="lbl">Место рождения</span><input class="fld" data-bind="bio.birth"></label>
+          <label class="f"><span class="lbl">Возраст</span><input class="fld" data-bind="bio.age"></label>
+          <label class="f"><span class="lbl">Пол и местоимения</span><input class="fld" data-bind="bio.gender"></label>
+          <label class="f"><span class="lbl">Рост</span><input class="fld" data-bind="bio.height"></label>
+          <label class="f"><span class="lbl">Вес</span><input class="fld" data-bind="bio.weight"></label>
+        </div>
+        <textarea class="fld ta" data-bind="bio.look" rows="3" placeholder="Как выглядит"></textarea>
+      </div>
+      <div class="bar">Личность</div>
+      <div class="panel">
+        <label class="f wide"><span class="lbl">Отношение</span><textarea class="fld ta" data-bind="bio.attitude" rows="2"></textarea></label>
+        <label class="f wide"><span class="lbl">Верования</span><textarea class="fld ta" data-bind="bio.beliefs" rows="2"></textarea></label>
+        <label class="f wide"><span class="lbl">Любит</span><textarea class="fld ta" data-bind="bio.likes" rows="2"></textarea></label>
+        <label class="f wide"><span class="lbl">Не любит</span><textarea class="fld ta" data-bind="bio.dislikes" rows="2"></textarea></label>
+        <label class="f wide"><span class="lbl">Меткие фразы</span><textarea class="fld ta" data-bind="bio.phrases" rows="2"></textarea></label>
+      </div>
+      <div class="bar">Заметки для кампании</div>
+      <div class="panel">
+        <textarea class="fld ta" data-bind="notes" rows="10" placeholder="Заметки"></textarea>
+        <label class="f wide"><span class="lbl">Союзники</span><textarea class="fld ta" data-bind="allies" rows="2"></textarea></label>
+        <label class="f wide"><span class="lbl">Враги</span><textarea class="fld ta" data-bind="enemies" rows="2"></textarea></label>
+        <label class="f wide"><span class="lbl">Организации</span><textarea class="fld ta" data-bind="orgs" rows="2"></textarea></label>
+      </div>
+    </section>
+  </main>
+  <footer class="foot">Значения сохраняются автоматически. Кнопка «Ещё» → «Сохранить копию в файл» делает резервную копию.</footer>
+</div>
+
+<style>
+  #app{
+    --bg:#E4DCC8; --panel:#F1EBDB; --ink:#171310; --muted:#6E6455; --line:#C3B79C;
+    --bar:#181410; --barText:#EDE3C9; --accent:#9A7817; --blood:#7A2A20; --heal:#3E6B4A;
+    --field:#FBF7EC; --shadow:0 1px 0 rgba(0,0,0,.18);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    color:var(--ink); background:var(--bg);
+    padding:12px; border-radius:6px; -webkit-text-size-adjust:100%;
+  }
+  #app.night{
+    --bg:#101312; --panel:#1A1F1E; --ink:#E7E0CE; --muted:#8D8878; --line:#2E3634;
+    --bar:#080A0A; --barText:#D6C9A4; --accent:#C9A227; --blood:#A8443A; --heal:#5C9A70;
+    --field:#232927; --shadow:none;
+  }
+  #app *{box-sizing:border-box;}
+  #app input,#app textarea,#app select,#app button{font-family:inherit;color:inherit;}
+
+  .topbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:10px;}
+  .brand{display:flex;align-items:baseline;gap:8px;margin-right:auto;}
+  .brand-mark{font:700 13px/1 ui-monospace,Menlo,monospace;letter-spacing:.12em;color:var(--panel);background:var(--bar);padding:6px 7px;border-radius:3px;}
+  .brand-name{font:600 15px/1 Georgia,"Times New Roman",serif;letter-spacing:.14em;text-transform:uppercase;}
+  .topbar-tools{display:flex;gap:6px;flex-wrap:wrap;}
+  .status{font-size:11px;color:var(--muted);width:100%;letter-spacing:.04em;}
+
+  .btn{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:10px 12px;font-size:13px;min-height:40px;cursor:pointer;box-shadow:var(--shadow);}
+  .btn:active{transform:translateY(1px);}
+  .btn.danger{border-color:var(--blood);color:var(--blood);}
+  .btn.blood{border-color:var(--blood);}
+  .btn.heal{border-color:var(--heal);}
+  .menu{display:flex;flex-wrap:wrap;gap:6px;padding:10px;background:var(--panel);border:1px solid var(--line);border-radius:4px;margin-bottom:10px;}
+
+  .tabs{display:flex;gap:4px;overflow-x:auto;padding-bottom:6px;margin-bottom:10px;-webkit-overflow-scrolling:touch;}
+  .tab{flex:0 0 auto;background:transparent;border:1px solid var(--line);border-radius:3px;padding:10px 14px;font:600 12px/1 Georgia,serif;letter-spacing:.12em;text-transform:uppercase;min-height:42px;cursor:pointer;}
+  .tab.on{background:var(--bar);color:var(--barText);border-color:var(--bar);}
+
+  .pane{display:none;}
+  .pane.on{display:block;}
+
+  .bar{background:var(--bar);color:var(--barText);font:600 13px/1 Georgia,"Times New Roman",serif;letter-spacing:.16em;text-transform:uppercase;padding:9px 12px;border-radius:3px 3px 0 0;margin-top:14px;}
+  .bar:first-child{margin-top:0;}
+  .panel{background:var(--panel);border:1px solid var(--line);border-top:none;border-radius:0 0 3px 3px;padding:12px;display:flex;flex-direction:column;gap:10px;}
+
+  .lbl{display:block;font:600 9.5px/1.3 -apple-system,sans-serif;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+  .f{display:block;min-width:0;}
+  .f.inline{display:flex;align-items:center;gap:10px;}
+  .f.inline .lbl{margin:0;}
+  .fld{width:100%;background:var(--field);border:1px solid var(--line);border-radius:3px;padding:9px 8px;font-size:16px;min-height:42px;}
+  .fld:focus{outline:2px solid var(--accent);outline-offset:1px;}
+  .fld.num{text-align:center;font-variant-numeric:tabular-nums;}
+  .fld.big{font:600 22px/1 Georgia,serif;min-height:52px;}
+  .fld.ro{display:flex;align-items:center;justify-content:center;font:600 18px/1 Georgia,serif;background:transparent;border-style:dashed;}
+  .fld.ta{resize:vertical;line-height:1.45;min-height:60px;}
+  .sel{-webkit-appearance:none;appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 15px) 19px,calc(100% - 10px) 19px;background-size:5px 5px;background-repeat:no-repeat;padding-right:28px;}
+
+  .grid-head{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;}
+  .grid-head .wide{grid-column:span 2;}
+  .hero{grid-column:span 2;}
+  .pips{display:flex;gap:8px;}
+  .pip{width:38px;height:38px;border-radius:50%;border:2px solid var(--line);background:var(--field);cursor:pointer;}
+  .pip.on{background:var(--accent);border-color:var(--accent);}
+
+  .abil-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;}
+  .abil{display:flex;align-items:center;gap:10px;background:var(--field);border:1px solid var(--line);border-radius:3px;padding:8px;}
+  .abil-mod{flex:0 0 54px;height:54px;border-radius:50%;border:2px solid var(--bar);display:flex;align-items:center;justify-content:center;font:700 20px/1 Georgia,serif;font-variant-numeric:tabular-nums;}
+  .abil-body{min-width:0;flex:1;}
+  .abil-body input{min-height:38px;}
+
+  .hpbar{position:relative;height:34px;border:1px solid var(--line);border-radius:3px;background:var(--field);overflow:hidden;}
+  .hpfill{height:100%;background:var(--blood);opacity:.75;width:0;transition:width .2s ease;}
+  .hplabel{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:600 14px/1 Georgia,serif;font-variant-numeric:tabular-nums;}
+  .hprow{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;}
+  .hprow.small{grid-template-columns:repeat(auto-fit,minmax(96px,1fr));}
+  .hprow .wide{grid-column:span 2;}
+  .hpctl{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+  .hpctl .fld{width:96px;}
+
+  .calcrow{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start;}
+  .medal{flex:0 0 96px;text-align:center;}
+  .medal-num{height:76px;border-radius:50%;border:3px double var(--bar);background:var(--field);display:flex;align-items:center;justify-content:center;font:700 28px/1 Georgia,serif;font-variant-numeric:tabular-nums;}
+  .medal-cap{font:600 9px/1.3 -apple-system,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:5px;}
+  .calcfields{flex:1 1 260px;display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;align-items:end;}
+  .formula{grid-column:1/-1;font:11px/1.4 ui-monospace,Menlo,monospace;color:var(--muted);}
+
+  .segwrap{min-width:0;}
+  .seg{display:flex;gap:2px;}
+  .seg button{flex:1;min-width:30px;min-height:42px;border:1px solid var(--line);background:var(--field);font:600 12px/1 Georgia,serif;cursor:pointer;padding:0;}
+  .seg button:first-child{border-radius:3px 0 0 3px;}
+  .seg button:last-child{border-radius:0 3px 3px 0;}
+  .seg button.on{background:var(--bar);color:var(--barText);border-color:var(--bar);}
+
+  .skills{display:flex;flex-direction:column;gap:6px;}
+  .skill{display:grid;grid-template-columns:minmax(120px,1.4fr) minmax(160px,auto) 62px 58px;gap:8px;align-items:center;padding:5px 0;border-bottom:1px dotted var(--line);}
+  .skill-name{font-size:14px;display:flex;align-items:center;gap:6px;min-width:0;}
+  .skill-name input{min-height:38px;font-size:14px;}
+  .ab{font:600 9px/1 -apple-system,sans-serif;letter-spacing:.08em;color:var(--muted);border:1px solid var(--line);border-radius:2px;padding:3px 4px;flex:0 0 auto;}
+  .tot{font:700 17px/1 Georgia,serif;font-variant-numeric:tabular-nums;text-align:center;border:1px solid var(--line);border-radius:3px;background:var(--field);padding:10px 0;}
+  @media (max-width:640px){
+    .skill{grid-template-columns:1fr 58px 54px;grid-template-areas:"n n n" "s i t";}
+    .skill-name{grid-area:n;} .skill .seg{grid-area:s;} .skill .item{grid-area:i;} .skill .tot{grid-area:t;}
+  }
+
+  .strike{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;padding:10px;border:1px solid var(--line);border-radius:3px;background:var(--field);}
+  .strike .wide{grid-column:1/-1;}
+  .strike .tot{padding:12px 0;}
+  .prof-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;}
+  .slots{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:8px;}
+  .slot{border:1px solid var(--line);border-radius:3px;background:var(--field);padding:6px;text-align:center;}
+  .slot .lbl{margin-bottom:5px;}
+  .slot-in{display:flex;gap:4px;}
+  .slot-in input{padding:6px 2px;min-height:38px;}
+  .foot{margin-top:14px;font-size:11px;color:var(--muted);text-align:center;}
+  @media (prefers-reduced-motion:reduce){#app *{transition:none!important;}}
+</style>
+
+<script>
+(function(){
+  var app=document.getElementById('app');
+  var KEY='pf2-sheet-v1';
+  var RANKS=[['Н',0],['И',2],['Э',4],['М',6],['Л',8]];
+  var ABIL=[['str','СИЛ','Сила'],['dex','ЛВК','Ловкость'],['con','ВЫН','Выносливость'],['int','ИНТ','Интеллект'],['wis','МДР','Мудрость'],['cha','ХАР','Харизма']];
+  var SKILLS=[['acro','Акробатика','dex',1],['athl','Атлетика','str',1],['thie','Воровство','dex',1],['surv','Выживание','wis',0],
+    ['dipl','Дипломатия','cha',0],['inti','Запугивание','cha',0],['lore1','','int',0],['lore2','','int',0],
+    ['perf','Исполнение','cha',0],['medi','Медицина','wis',0],['arca','Мистицизм','int',0],['dece','Обман','cha',0],
+    ['soci','Общество','int',0],['occu','Оккультизм','int',0],['natu','Природа','wis',0],['reli','Религия','wis',0],
+    ['craf','Ремесло','int',0],['stea','Скрытность','dex',1]];
+  var SAVES=[['fort','Стойкость','con'],['ref','Реакция','dex'],['will','Воля','wis'],['perc','Восприятие','wis']];
+  var WPROF=[['simple','Простое'],['martial','Особое'],['adv','Прочее'],['unarmed','Безоружное']];
+
+  var blob={v:1,active:null,chars:{}};
+  var saveTimer=null, hasStore=!!(window.storage&&window.storage.get);
+
+  function uid(){return 'c'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+  function blank(){return {name:'Новый персонаж',level:1,abil:{str:10,dex:10,con:10,int:10,wis:10,cha:10},hp:{},ac:{},shield:{},saves:{},classdc:{key:'str'},skills:{},melee:[{},{},{}],ranged:[{},{},{}],wprof:{},spell:{key:'int'},slots:{},focus:{},coin:{},bio:{}};}
+  function S(){return blob.chars[blob.active];}
+  function get(p){var o=S();var ks=p.split('.');for(var i=0;i<ks.length;i++){if(o==null)return undefined;o=o[ks[i]];}return o;}
+  function set(p,v){var o=S();var ks=p.split('.');for(var i=0;i<ks.length-1;i++){if(o[ks[i]]==null)o[ks[i]]={};o=o[ks[i]];}o[ks[ks.length-1]]=v;queueSave();}
+  function num(v){if(v===''||v==null)return 0;var n=parseInt(String(v).replace(/[^\-0-9]/g,''),10);return isNaN(n)?0:n;}
+  function sign(n){return (n>=0?'+':'')+n;}
+  function lvl(){return num(get('level')||1);}
+  function mod(k){var s=get('abil.'+k);return Math.floor(((s===''||s==null?10:num(s))-10)/2);}
+  function prof(r){r=num(r);return r===0?0:RANKS[r][1]+lvl();}
+  function status(t){document.getElementById('status').textContent=t;}
+  function stamp(){var d=new Date();return d.getHours()+':'+String(d.getMinutes()).padStart(2,'0');}
+
+  var hasLocal=(function(){try{window.localStorage.setItem('pf2test','1');window.localStorage.removeItem('pf2test');return true;}catch(e){return false;}})();
+
+  function queueSave(){clearTimeout(saveTimer);status('Сохраняю…');saveTimer=setTimeout(save,600);}
+  async function save(){
+    var txt=JSON.stringify(blob);
+    if(hasStore){
+      try{await window.storage.set(KEY,txt,false);status('Сохранено в '+stamp());return;}
+      catch(e){}
+    }
+    if(hasLocal){
+      try{window.localStorage.setItem(KEY,txt);status('Сохранено в '+stamp());return;}catch(e){}
+    }
+    status('Не удалось сохранить. Нажмите «Ещё» → «Сохранить копию в файл»');
+  }
+  async function load(){
+    if(hasStore){try{var r=await window.storage.get(KEY,false);if(r&&r.value)blob=JSON.parse(r.value);}catch(e){}}
+    if(!blob.active&&hasLocal){try{var l=window.localStorage.getItem(KEY);if(l)blob=JSON.parse(l);}catch(e){}}
+    if(!blob.chars||!Object.keys(blob.chars).length){blob={v:1,active:null,chars:{}};var id=uid();blob.chars[id]=blank();blob.active=id;}
+    if(!blob.chars[blob.active])blob.active=Object.keys(blob.chars)[0];
+  }
+
+  /* ---------- построение ---------- */
+  function segHTML(path){var h='';for(var i=0;i<RANKS.length;i++){h+='<button type="button" data-seg-path="'+path+'" data-v="'+i+'">'+RANKS[i][0]+'</button>';}return h;}
+  function buildSegs(){
+    var nodes=app.querySelectorAll('.seg');
+    for(var i=0;i<nodes.length;i++){if(!nodes[i].dataset.built){nodes[i].innerHTML=segHTML(nodes[i].dataset.seg);nodes[i].dataset.built='1';}}
+  }
+
+  document.getElementById('heroPips').innerHTML='<button type="button" class="pip" data-hero="1"></button><button type="button" class="pip" data-hero="2"></button><button type="button" class="pip" data-hero="3"></button>';
+
+  document.getElementById('abilGrid').innerHTML=ABIL.map(function(a){
+    return '<div class="abil"><div class="abil-mod" id="mod-'+a[0]+'">+0</div><div class="abil-body">'+
+      '<span class="lbl">'+a[2]+'</span><input class="fld num" inputmode="numeric" data-bind="abil.'+a[0]+'"></div></div>';
+  }).join('');
+
+  document.getElementById('savesGrid').innerHTML='<div class="hprow">'+SAVES.map(function(s){
+    return '<div class="f"><span class="lbl">'+s[1]+' ('+ABIL.filter(function(a){return a[0]===s[2];})[0][1]+')</span>'+
+      '<div class="tot" id="tot-'+s[0]+'">+0</div>'+
+      '<div class="seg" data-seg="saves.'+s[0]+'.rank"></div>'+
+      '<input class="fld num" inputmode="numeric" placeholder="предмет" data-bind="saves.'+s[0]+'.item" style="margin-top:6px">'+
+      '</div>';
+  }).join('')+'</div><label class="f wide"><span class="lbl">Примечания и чувства</span><input class="fld" data-bind="senses"></label>';
+
+  document.getElementById('skillsGrid').innerHTML=SKILLS.map(function(s){
+    var abbr=ABIL.filter(function(a){return a[0]===s[2];})[0][1];
+    var nameCell=s[1]?('<span>'+s[1]+'</span>'):('<input class="fld" placeholder="Знание (…)" data-bind="skills.'+s[0]+'.label">');
+    return '<div class="skill"><div class="skill-name">'+nameCell+'<span class="ab">'+abbr+(s[3]?' · броня':'')+'</span></div>'+
+      '<div class="seg" data-seg="skills.'+s[0]+'.rank"></div>'+
+      '<input class="fld num item" inputmode="numeric" placeholder="пр." data-bind="skills.'+s[0]+'.item">'+
+      '<div class="tot" id="tot-'+s[0]+'">+0</div></div>';
+  }).join('');
+
+  function strikeHTML(kind,i){
+    var abilSel=kind==='melee'
+      ? '<label class="f"><span class="lbl">Характеристика</span><select class="fld sel" data-bind="'+kind+'.'+i+'.abil"><option value="str">СИЛ</option><option value="dex">ЛВК (фехт.)</option></select></label>'
+      : '<label class="f"><span class="lbl">Характеристика</span><select class="fld sel" data-bind="'+kind+'.'+i+'.abil"><option value="dex">ЛВК</option><option value="str">СИЛ</option></select></label>';
+    return '<div class="strike">'+
+      '<label class="f wide"><span class="lbl">Оружие</span><input class="fld" data-bind="'+kind+'.'+i+'.name"></label>'+
+      '<div class="f"><span class="lbl">Атака</span><div class="tot" id="tot-'+kind+i+'">+0</div></div>'+
+      '<div class="segwrap"><span class="lbl">Умение</span><div class="seg" data-seg="'+kind+'.'+i+'.rank"></div></div>'+
+      '<label class="f"><span class="lbl">Предмет</span><input class="fld num" inputmode="numeric" data-bind="'+kind+'.'+i+'.item"></label>'+
+      abilSel+
+      '<label class="f"><span class="lbl">Урон</span><input class="fld" placeholder="1к8+4 рубящий" data-bind="'+kind+'.'+i+'.dmg"></label>'+
+      '<label class="f wide"><span class="lbl">Дескрипторы и примечания</span><input class="fld" data-bind="'+kind+'.'+i+'.traits"></label>'+
+      '</div>';
+  }
+  document.getElementById('meleeGrid').innerHTML=[0,1,2].map(function(i){return strikeHTML('melee',i);}).join('');
+  document.getElementById('rangedGrid').innerHTML=[0,1,2].map(function(i){return strikeHTML('ranged',i);}).join('');
+
+  document.getElementById('wpnProf').innerHTML=WPROF.map(function(w){
+    return '<div class="segwrap"><span class="lbl">'+w[1]+'</span><div class="seg" data-seg="wprof.'+w[0]+'"></div></div>';
+  }).join('')+'<label class="f"><span class="lbl">Прочее</span><input class="fld" data-bind="wprofNotes"></label>';
+
+  var slotHTML='';
+  for(var r=1;r<=10;r++){
+    slotHTML+='<div class="slot"><span class="lbl">Круг '+r+'</span><div class="slot-in">'+
+      '<input class="fld num" inputmode="numeric" placeholder="всего" data-bind="slots.r'+r+'.max">'+
+      '<input class="fld num" inputmode="numeric" placeholder="есть" data-bind="slots.r'+r+'.cur"></div></div>';
+  }
+  document.getElementById('slotGrid').innerHTML=slotHTML;
+  buildSegs();
+
+  /* ---------- отрисовка значений ---------- */
+  function fill(){
+    var nodes=app.querySelectorAll('[data-bind]');
+    for(var i=0;i<nodes.length;i++){
+      var v=get(nodes[i].dataset.bind);
+      nodes[i].value=(v===undefined||v===null)?'':v;
+      if(nodes[i].classList.contains('ta'))grow(nodes[i]);
+    }
+    var segs=app.querySelectorAll('.seg');
+    for(var j=0;j<segs.length;j++){
+      var val=num(get(segs[j].dataset.seg));
+      var bs=segs[j].querySelectorAll('button');
+      for(var k=0;k<bs.length;k++)bs[k].classList.toggle('on',k===val);
+    }
+    refresh();
+  }
+  function grow(t){t.style.height='auto';t.style.height=Math.max(t.scrollHeight+2,60)+'px';}
+
+  function refresh(){
+    ABIL.forEach(function(a){document.getElementById('mod-'+a[0]).textContent=sign(mod(a[0]));});
+
+    var dex=mod('dex'), cap=get('ac.cap');
+    if(cap!==''&&cap!=null)dex=Math.min(dex,num(cap));
+    var acP=prof(get('ac.rank'));
+    var ac=10+dex+acP+num(get('ac.item'))+num(get('ac.misc'));
+    document.getElementById('acTotal').textContent=ac;
+    document.getElementById('acFormula').textContent='10 + ЛВК '+sign(dex)+' + умение '+sign(acP)+' + предмет '+sign(num(get('ac.item')))+' + прочее '+sign(num(get('ac.misc')));
+
+    SAVES.forEach(function(s){
+      var t=mod(s[2])+prof(get('saves.'+s[0]+'.rank'))+num(get('saves.'+s[0]+'.item'));
+      document.getElementById('tot-'+s[0]).textContent=sign(t);
+    });
+
+    var pen=num(get('armorPenalty'));
+    SKILLS.forEach(function(s){
+      var r=num(get('skills.'+s[0]+'.rank'));
+      var t=mod(s[2])+prof(r)+num(get('skills.'+s[0]+'.item'))+(s[3]?pen:0);
+      document.getElementById('tot-'+s[0]).textContent=sign(t);
+    });
+
+    ['melee','ranged'].forEach(function(kind){
+      for(var i=0;i<3;i++){
+        var ab=get(kind+'.'+i+'.abil')||(kind==='melee'?'str':'dex');
+        var t=mod(ab)+prof(get(kind+'.'+i+'.rank'))+num(get(kind+'.'+i+'.item'));
+        document.getElementById('tot-'+kind+i).textContent=sign(t);
+      }
+    });
+
+    var ck=get('classdc.key')||'str';
+    document.getElementById('classDC').textContent=10+mod(ck)+prof(get('classdc.rank'))+num(get('classdc.item'));
+    var sk=get('spell.key')||'int', sp=prof(get('spell.rank'));
+    document.getElementById('spellAtk').textContent=sign(mod(sk)+sp);
+    document.getElementById('spellDC').textContent=10+mod(sk)+sp;
+
+    document.getElementById('bulkEnc').textContent=5+mod('str');
+    document.getElementById('bulkMax').textContent=10+mod('str');
+
+    var cur=num(get('hp.cur')), max=num(get('hp.max')), tmp=num(get('hp.temp'));
+    document.getElementById('hpFill').style.width=(max>0?Math.max(0,Math.min(100,cur/max*100)):0)+'%';
+    document.getElementById('hpLabel').textContent=cur+' / '+max+(tmp>0?'  (+'+tmp+' врем.)':'');
+
+    var hero=num(get('hero'));
+    var pips=app.querySelectorAll('.pip');
+    for(var p=0;p<pips.length;p++)pips[p].classList.toggle('on',p<hero);
+
+    var sel=document.getElementById('charSelect');
+    var opt=sel.options[sel.selectedIndex];
+    if(opt&&opt.textContent!==(get('name')||'Без имени'))renderCharList();
+  }
+
+  function renderCharList(){
+    var sel=document.getElementById('charSelect');
+    sel.innerHTML=Object.keys(blob.chars).map(function(id){
+      return '<option value="'+id+'"'+(id===blob.active?' selected':'')+'>'+((blob.chars[id].name||'Без имени')+'').replace(/</g,'&lt;')+'</option>';
+    }).join('');
+  }
+
+  /* ---------- события ---------- */
+  app.addEventListener('input',function(e){
+    var t=e.target;
+    if(t.dataset&&t.dataset.bind){set(t.dataset.bind,t.value);if(t.classList.contains('ta'))grow(t);refresh();}
+  });
+  app.addEventListener('change',function(e){
+    var t=e.target;
+    if(t.id==='charSelect'){blob.active=t.value;fill();queueSave();}
+  });
+  app.addEventListener('click',function(e){
+    var t=e.target.closest('button');if(!t)return;
+    if(t.dataset.segPath!==undefined){
+      set(t.dataset.segPath,num(t.dataset.v));
+      var sibs=t.parentNode.querySelectorAll('button');
+      for(var i=0;i<sibs.length;i++)sibs[i].classList.toggle('on',sibs[i]===t);
+      refresh();return;
+    }
+    if(t.dataset.hero!==undefined){
+      var v=num(t.dataset.hero); if(num(get('hero'))===v)v=v-1;
+      set('hero',v);refresh();return;
+    }
+    if(t.dataset.hp!==undefined){applyHP(num(t.dataset.hp));return;}
+    if(t.dataset.tab){
+      var tabs=app.querySelectorAll('.tab');for(var j=0;j<tabs.length;j++)tabs[j].classList.toggle('on',tabs[j]===t);
+      var panes=app.querySelectorAll('.pane');for(var k=0;k<panes.length;k++)panes[k].classList.toggle('on',panes[k].dataset.pane===t.dataset.tab);
+      window.scrollTo(0,0);return;
+    }
+    var a=t.dataset.act;
+    if(a==='menu'){var m=document.getElementById('menu');m.hidden=!m.hidden;}
+    else if(a==='theme'){app.classList.toggle('night');}
+    else if(a==='newChar'){var id=uid();blob.chars[id]=blank();blob.active=id;renderCharList();fill();queueSave();}
+    else if(a==='delChar'){
+      if(Object.keys(blob.chars).length<2){status('Это единственный персонаж — удалить нельзя');return;}
+      if(!confirm('Удалить «'+(get('name')||'Без имени')+'»? Отменить будет нельзя.'))return;
+      delete blob.chars[blob.active];blob.active=Object.keys(blob.chars)[0];renderCharList();fill();queueSave();
+    }
+    else if(a==='dmg'){applyHP(-num(document.getElementById('hpDelta').value));document.getElementById('hpDelta').value='';}
+    else if(a==='heal'){applyHP(num(document.getElementById('hpDelta').value));document.getElementById('hpDelta').value='';}
+    else if(a==='export'){
+      var blobFile=new Blob([JSON.stringify(blob,null,2)],{type:'application/json'});
+      var url=URL.createObjectURL(blobFile);var link=document.createElement('a');
+      link.href=url;link.download='pf2-'+((get('name')||'персонаж')+'').replace(/\s+/g,'-')+'.json';
+      document.body.appendChild(link);link.click();document.body.removeChild(link);
+      setTimeout(function(){URL.revokeObjectURL(url);},1000);status('Копия выгружена');
+    }
+    else if(a==='import'){document.getElementById('importFile').click();}
+  });
+
+  document.getElementById('importFile').addEventListener('change',function(e){
+    var f=e.target.files[0];if(!f)return;
+    var rd=new FileReader();
+    rd.onload=function(){
+      try{
+        var inc=JSON.parse(rd.result);
+        if(!inc.chars)throw 0;
+        Object.keys(inc.chars).forEach(function(id){blob.chars[id]=inc.chars[id];});
+        blob.active=inc.active&&blob.chars[inc.active]?inc.active:Object.keys(blob.chars)[0];
+        renderCharList();fill();queueSave();status('Файл загружен');
+      }catch(err){status('Не получилось прочитать файл — нужен JSON, выгруженный отсюда же');}
+    };
+    rd.readAsText(f);e.target.value='';
+  });
+
+  function applyHP(d){
+    if(!d)return;
+    var tmp=num(get('hp.temp')), cur=num(get('hp.cur')), max=num(get('hp.max'));
+    if(d<0&&tmp>0){var used=Math.min(tmp,-d);tmp-=used;d+=used;set('hp.temp',tmp);}
+    cur=cur+d; if(cur<0)cur=0; if(max>0&&cur>max)cur=max;
+    set('hp.cur',cur);fill();
+  }
+
+  load().then(function(){
+    renderCharList();fill();
+    status((hasStore||hasLocal)?'Готово. Значения сохраняются автоматически':'Хранилище недоступно — работайте и выгружайте копию в файл');
+  });
+})();
+</script>
+
+</body>
+</html>
