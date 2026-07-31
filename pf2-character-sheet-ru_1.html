@@ -30,10 +30,39 @@
 
   <div id="menu" class="menu" hidden>
     <button class="btn" data-act="theme">Сменить тему</button>
+    <button class="btn" data-act="cloud">Облако (GitHub)</button>
     <button class="btn" data-act="export">Сохранить копию в файл</button>
     <button class="btn" data-act="import">Загрузить из файла</button>
     <button class="btn danger" data-act="delChar">Удалить этого персонажа</button>
     <input type="file" id="importFile" accept="application/json,.json" hidden>
+  </div>
+
+  <div id="cloud" class="cloud" hidden>
+    <div class="row">
+      <button class="btn" data-act="cloudPull">Взять из облака</button>
+      <button class="btn" data-act="cloudPush">Отправить в облако</button>
+      <label class="hint" style="display:flex;align-items:center;gap:6px;">
+        <input type="checkbox" id="cloudAuto"> автосинхронизация
+      </label>
+    </div>
+    <div class="row">
+      <input class="fld" id="cloudToken" type="password" autocomplete="off" placeholder="GitHub-токен (нужен только для записи)">
+      <button class="btn" data-act="cloudSaveToken">Сохранить токен</button>
+      <button class="btn danger" data-act="cloudForgetToken">Забыть</button>
+    </div>
+    <div class="row">
+      <input class="fld" id="cloudRepo" placeholder="owner/repo" autocomplete="off">
+      <input class="fld" id="cloudBranch" placeholder="ветка" autocomplete="off">
+      <input class="fld" id="cloudPath" placeholder="путь к json" autocomplete="off">
+      <button class="btn" data-act="cloudSaveCfg">Применить</button>
+    </div>
+    <div class="hint">
+      Чтение работает без токена, если репозиторий публичный. Для записи нужен
+      <b>fine-grained</b> токен на этот репозиторий с правом <b>Contents: Read and write</b>
+      (<a href="https://github.com/settings/personal-access-tokens" target="_blank" rel="noopener">github.com/settings/personal-access-tokens</a>).
+      Токен хранится только в этом браузере. Персонажи объединяются по времени последнего изменения:
+      где правили позже — та версия и побеждает. Удаление персонажа на другом устройстве не переносится.
+    </div>
   </div>
 
   <nav class="tabs" id="tabs">
@@ -304,6 +333,12 @@
   .btn.heal{border-color:var(--heal);}
   .menu{display:flex;flex-wrap:wrap;gap:6px;padding:10px;background:var(--panel);border:1px solid var(--line);border-radius:4px;margin-bottom:10px;}
 
+  .cloud{padding:10px;background:var(--panel);border:1px solid var(--line);border-radius:4px;margin-bottom:10px;display:flex;flex-direction:column;gap:8px;}
+  .cloud .row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+  .cloud .row .fld{flex:1 1 140px;min-width:0;}
+  .cloud .hint{font-size:11px;color:var(--muted);line-height:1.5;}
+  .cloud .hint a{color:inherit;}
+
   .tabs{display:flex;gap:4px;overflow-x:auto;padding-bottom:6px;margin-bottom:10px;-webkit-overflow-scrolling:touch;}
   .tab{flex:0 0 auto;background:transparent;border:1px solid var(--line);border-radius:3px;padding:10px 14px;font:600 12px/1 Georgia,serif;letter-spacing:.12em;text-transform:uppercase;min-height:42px;cursor:pointer;}
   .tab.on{background:var(--bar);color:var(--barText);border-color:var(--bar);}
@@ -402,7 +437,7 @@
   var WPROF=[['simple','Простое'],['martial','Особое'],['adv','Прочее'],['unarmed','Безоружное']];
 
   var blob={v:1,active:null,chars:{}};
-  var saveTimer=null, hasStore=!!(window.storage&&window.storage.get);
+  var saveTimer=null, hasStore=!!(window.storage&&window.storage.get), freshId=null;
 
   function uid(){return 'c'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
   function blank(){return {name:'Новый персонаж',level:1,abil:{str:10,dex:10,con:10,int:10,wis:10,cha:10},hp:{},ac:{},shield:{},saves:{},classdc:{key:'str'},skills:{},melee:[{},{},{}],ranged:[{},{},{}],wprof:{},spell:{key:'int'},slots:{},focus:{},coin:{},bio:{}};}
@@ -419,23 +454,130 @@
 
   var hasLocal=(function(){try{window.localStorage.setItem('pf2test','1');window.localStorage.removeItem('pf2test');return true;}catch(e){return false;}})();
 
-  function queueSave(){clearTimeout(saveTimer);status('Сохраняю…');saveTimer=setTimeout(save,600);}
+  function queueSave(){
+    var c=S(); if(c)c._ts=Date.now();
+    clearTimeout(saveTimer);status('Сохраняю…');saveTimer=setTimeout(save,600);
+  }
   async function save(){
     var txt=JSON.stringify(blob);
+    var ok=false;
     if(hasStore){
-      try{await window.storage.set(KEY,txt,false);status('Сохранено в '+stamp());return;}
+      try{await window.storage.set(KEY,txt,false);ok=true;}
       catch(e){}
     }
-    if(hasLocal){
-      try{window.localStorage.setItem(KEY,txt);status('Сохранено в '+stamp());return;}catch(e){}
+    if(!ok&&hasLocal){
+      try{window.localStorage.setItem(KEY,txt);ok=true;}catch(e){}
     }
-    status('Не удалось сохранить. Нажмите «Ещё» → «Сохранить копию в файл»');
+    status(ok?('Сохранено в '+stamp()):'Не удалось сохранить. Нажмите «Ещё» → «Сохранить копию в файл»');
+    if(ok)queueCloudPush();
   }
   async function load(){
     if(hasStore){try{var r=await window.storage.get(KEY,false);if(r&&r.value)blob=JSON.parse(r.value);}catch(e){}}
     if(!blob.active&&hasLocal){try{var l=window.localStorage.getItem(KEY);if(l)blob=JSON.parse(l);}catch(e){}}
-    if(!blob.chars||!Object.keys(blob.chars).length){blob={v:1,active:null,chars:{}};var id=uid();blob.chars[id]=blank();blob.active=id;}
+    if(!blob.chars||!Object.keys(blob.chars).length){blob={v:1,active:null,chars:{}};var id=uid();blob.chars[id]=blank();blob.active=id;freshId=id;}
     if(!blob.chars[blob.active])blob.active=Object.keys(blob.chars)[0];
+  }
+
+  /* ---------- облако: JSON-файл в репозитории GitHub ---------- */
+  var CLOUD_KEY='pf2-cloud-v1';
+  var cloud={repo:'zlobniyhren/pf2',branch:'main',path:'data/characters.json',token:'',auto:false};
+  var cloudSha=null,cloudTimer=null,cloudBusy=false;
+
+  function cloudReadCfg(){
+    if(!hasLocal)return;
+    try{var raw=window.localStorage.getItem(CLOUD_KEY);if(!raw)return;var c=JSON.parse(raw);
+      for(var k in cloud)if(Object.prototype.hasOwnProperty.call(c,k)&&c[k]!=null)cloud[k]=c[k];}catch(e){}
+  }
+  function cloudWriteCfg(){
+    if(!hasLocal)return;
+    try{window.localStorage.setItem(CLOUD_KEY,JSON.stringify(cloud));}catch(e){}
+  }
+  function b64enc(s){var b=new TextEncoder().encode(s),r='';for(var i=0;i<b.length;i++)r+=String.fromCharCode(b[i]);return btoa(r);}
+  function b64dec(s){var t=atob(String(s).replace(/\s/g,'')),b=new Uint8Array(t.length);for(var i=0;i<t.length;i++)b[i]=t.charCodeAt(i);return new TextDecoder().decode(b);}
+  function ts(o){return o&&typeof o._ts==='number'?o._ts:0;}
+  function cloudUrl(){return 'https://api.github.com/repos/'+cloud.repo+'/contents/'+String(cloud.path).replace(/^\/+/,'');}
+  function cloudHeaders(extra){
+    var h={'Accept':'application/vnd.github+json'};
+    if(cloud.token)h['Authorization']='Bearer '+cloud.token;
+    if(extra)for(var k in extra)h[k]=extra[k];
+    return h;
+  }
+  async function cloudGet(){
+    var r=await fetch(cloudUrl()+'?ref='+encodeURIComponent(cloud.branch)+'&_='+Date.now(),{headers:cloudHeaders(),cache:'no-store'});
+    if(r.status===404)return {data:null,sha:null};
+    if(r.status===401||r.status===403)throw new Error('нет доступа — проверьте токен и права на репозиторий');
+    if(!r.ok)throw new Error('GitHub ответил '+r.status);
+    var j=await r.json(),txt=j.content?b64dec(j.content):'';
+    var data=null;
+    if(txt){try{data=JSON.parse(txt);}catch(e){throw new Error('в облаке лежит не наш JSON');}}
+    return {data:data,sha:j.sha||null};
+  }
+  function cloudMerge(remote){
+    if(!remote||!remote.chars)return 0;
+    var n=0;
+    Object.keys(remote.chars).forEach(function(id){
+      var rc=remote.chars[id];
+      if(!rc||typeof rc!=='object')return;
+      if(!blob.chars[id]||ts(rc)>ts(blob.chars[id])){blob.chars[id]=rc;n++;}
+    });
+    /* если на этом устройстве был только что созданный пустой бланк — убираем его в пользу облачных */
+    if(n&&freshId&&blob.chars[freshId]&&!ts(blob.chars[freshId])&&Object.keys(blob.chars).length>1){
+      delete blob.chars[freshId];freshId=null;
+      blob.active=(remote.active&&blob.chars[remote.active])?remote.active:Object.keys(blob.chars)[0];
+    }
+    if(!blob.chars[blob.active])blob.active=(remote.active&&blob.chars[remote.active])?remote.active:Object.keys(blob.chars)[0];
+    return n;
+  }
+  async function cloudPull(silent){
+    if(cloudBusy)return;
+    cloudBusy=true;
+    try{
+      if(!silent)status('Читаю облако…');
+      var r=await cloudGet();cloudSha=r.sha;
+      if(!r.data){if(!silent)status('В облаке пока пусто');return;}
+      var n=cloudMerge(r.data);
+      if(n){renderCharList();fill();await save();}
+      status(n?('Из облака обновлено персонажей: '+n):'Облако — без изменений');
+    }catch(e){status('Облако: '+e.message);}
+    finally{cloudBusy=false;}
+  }
+  async function cloudPush(silent){
+    if(!cloud.token){if(!silent)status('Нужен токен: «Ещё» → «Облако (GitHub)»');return;}
+    if(cloudBusy)return;
+    cloudBusy=true;
+    try{
+      if(!silent)status('Отправляю в облако…');
+      var r=await cloudGet();cloudSha=r.sha;
+      if(cloudMerge(r.data)){renderCharList();fill();}
+      var body={message:'Бланк PF2: обновление '+new Date().toISOString(),content:b64enc(JSON.stringify(blob,null,2)),branch:cloud.branch};
+      if(cloudSha)body.sha=cloudSha;
+      var pr=await fetch(cloudUrl(),{method:'PUT',headers:cloudHeaders({'Content-Type':'application/json'}),body:JSON.stringify(body)});
+      if(!pr.ok){
+        if(pr.status===409||pr.status===422)throw new Error('файл успели изменить, нажмите «Отправить в облако» ещё раз');
+        if(pr.status===401||pr.status===403)throw new Error('нет прав на запись — токену нужен доступ Contents: Read and write');
+        var m='';try{m=(await pr.json()).message||'';}catch(e){}
+        throw new Error(pr.status+(m?' — '+m:''));
+      }
+      var pj=await pr.json();cloudSha=(pj.content&&pj.content.sha)||null;
+      status('Отправлено в облако в '+stamp());
+    }catch(e){status('Облако: '+e.message);}
+    finally{cloudBusy=false;}
+  }
+  function queueCloudPush(){
+    if(!cloud.auto||!cloud.token)return;
+    clearTimeout(cloudTimer);
+    cloudTimer=setTimeout(function(){cloudTimer=null;cloudPush(true);},4000);
+  }
+  /* уходим со страницы (свернули браузер на телефоне) — не ждём таймер */
+  document.addEventListener('visibilitychange',function(){
+    if(document.hidden&&cloud.auto&&cloud.token&&cloudTimer){clearTimeout(cloudTimer);cloudTimer=null;cloudPush(true);}
+  });
+  function cloudFillForm(){
+    document.getElementById('cloudRepo').value=cloud.repo;
+    document.getElementById('cloudBranch').value=cloud.branch;
+    document.getElementById('cloudPath').value=cloud.path;
+    document.getElementById('cloudToken').value=cloud.token?'••••••••':'';
+    document.getElementById('cloudAuto').checked=!!cloud.auto;
   }
 
   /* ---------- построение ---------- */
@@ -584,6 +726,7 @@
   app.addEventListener('change',function(e){
     var t=e.target;
     if(t.id==='charSelect'){blob.active=t.value;fill();queueSave();}
+    else if(t.id==='cloudAuto'){cloud.auto=t.checked;cloudWriteCfg();status(cloud.auto?'Автосинхронизация включена':'Автосинхронизация выключена');if(cloud.auto)cloudPush(true);}
   });
   app.addEventListener('click',function(e){
     var t=e.target.closest('button');if(!t)return;
@@ -622,6 +765,23 @@
       setTimeout(function(){URL.revokeObjectURL(url);},1000);status('Копия выгружена');
     }
     else if(a==='import'){document.getElementById('importFile').click();}
+    else if(a==='cloud'){var c=document.getElementById('cloud');c.hidden=!c.hidden;if(!c.hidden)cloudFillForm();}
+    else if(a==='cloudPull'){cloudPull(false);}
+    else if(a==='cloudPush'){cloudPush(false);}
+    else if(a==='cloudSaveToken'){
+      var f=document.getElementById('cloudToken'),v=f.value.trim();
+      if(!v||/^•+$/.test(v)){status('Вставьте токен в поле');return;}
+      cloud.token=v;cloudWriteCfg();cloudFillForm();status('Токен сохранён в этом браузере');
+    }
+    else if(a==='cloudForgetToken'){cloud.token='';cloud.auto=false;cloudWriteCfg();cloudFillForm();status('Токен удалён из этого браузера');}
+    else if(a==='cloudSaveCfg'){
+      var rp=document.getElementById('cloudRepo').value.trim().replace(/^https?:\/\/github\.com\//,'').replace(/\.git$/,'').replace(/\/+$/,'');
+      if(!/^[^\/]+\/[^\/]+$/.test(rp)){status('Репозиторий пишется как owner/repo');return;}
+      cloud.repo=rp;
+      cloud.branch=document.getElementById('cloudBranch').value.trim()||'main';
+      cloud.path=document.getElementById('cloudPath').value.trim()||'data/characters.json';
+      cloudSha=null;cloudWriteCfg();cloudFillForm();status('Настройки облака сохранены');
+    }
   });
 
   document.getElementById('importFile').addEventListener('change',function(e){
@@ -647,9 +807,11 @@
     set('hp.cur',cur);fill();
   }
 
+  cloudReadCfg();
   load().then(function(){
     renderCharList();fill();
     status((hasStore||hasLocal)?'Готово. Значения сохраняются автоматически':'Хранилище недоступно — работайте и выгружайте копию в файл');
+    if(location.protocol==='http:'||location.protocol==='https:')cloudPull(true);
   });
 })();
 </script>
