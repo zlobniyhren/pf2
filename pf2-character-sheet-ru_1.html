@@ -538,7 +538,7 @@
       var n=cloudMerge(r.data);
       if(n){renderCharList();fill();await save();}
       status(n?('Из облака обновлено персонажей: '+n):'Облако — без изменений');
-    }catch(e){status('Облако: '+e.message);}
+    }catch(e){if(!(silent&&!cloud.token))status('Облако: '+e.message);}
     finally{cloudBusy=false;}
   }
   async function cloudPush(silent){
@@ -811,7 +811,7 @@
   load().then(function(){
     renderCharList();fill();
     status((hasStore||hasLocal)?'Готово. Значения сохраняются автоматически':'Хранилище недоступно — работайте и выгружайте копию в файл');
-    if(location.protocol==='http:'||location.protocol==='https:')cloudPull(true);
+    cloudPull(true);
   });
 })();
 </script>
