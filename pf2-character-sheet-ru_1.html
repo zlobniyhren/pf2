@@ -64,6 +64,7 @@
       <button class="btn danger" data-act="delChar">Удалить этого персонажа</button>
       <input type="file" id="importFile" accept="application/json,.json" hidden>
     </div>
+    <div class="hint" id="buildStamp"></div>
   </div>
 
   <nav class="tabs" id="tabs">
@@ -452,6 +453,7 @@
 (function(){
   var app=document.getElementById('app');
   var KEY='pf2-sheet-v1';
+  var BUILD='2026-07-31 · 4';
   var RANKS=[['Н',0],['И',2],['Э',4],['М',6],['Л',8]];
   var ABIL=[['str','СИЛ','Сила'],['dex','ЛВК','Ловкость'],['con','ВЫН','Выносливость'],['int','ИНТ','Интеллект'],['wis','МДР','Мудрость'],['cha','ХАР','Харизма']];
   var SKILLS=[['acro','Акробатика','dex',1],['athl','Атлетика','str',1],['thie','Воровство','dex',1],['surv','Выживание','wis',0],
@@ -623,6 +625,7 @@
     if(document.hidden&&cloud.auto&&cloud.token&&cloudTimer){clearTimeout(cloudTimer);cloudTimer=null;cloudPush(true);}
   });
   function cloudFillForm(){
+    document.getElementById('buildStamp').textContent='Версия бланка: '+BUILD+'. Если здесь старая дата — страница открыта из кеша, обновите её.';
     document.getElementById('cloudRepo').value=cloud.repo;
     document.getElementById('cloudBranch').value=cloud.branch;
     document.getElementById('cloudPath').value=cloud.path;

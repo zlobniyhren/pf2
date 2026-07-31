@@ -4,11 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Бланк персонажа Pathfinder 2e</title>
-<meta http-equiv="refresh" content="0; url=pf2-character-sheet-ru_1.html">
 <link rel="canonical" href="pf2-character-sheet-ru_1.html">
+<style>body{margin:0;padding:24px;font:15px/1.5 -apple-system,system-ui,sans-serif;background:#E4DCC8;color:#2b2620;}</style>
 </head>
 <body>
-<p>Открываю бланк… Если ничего не произошло — <a href="pf2-character-sheet-ru_1.html">нажмите сюда</a>.</p>
-<script>location.replace('pf2-character-sheet-ru_1.html');</script>
+<p>Открываю бланк… Если ничего не произошло — <a id="go" href="pf2-character-sheet-ru_1.html">нажмите сюда</a>.</p>
+<script>
+/* уникальный адрес на каждый заход: браузер не подсунет старую версию из кеша */
+var to='pf2-character-sheet-ru_1.html?v='+Date.now();
+document.getElementById('go').href=to;
+location.replace(to);
+</script>
+<noscript><meta http-equiv="refresh" content="0; url=pf2-character-sheet-ru_1.html"></noscript>
 </body>
 </html>
