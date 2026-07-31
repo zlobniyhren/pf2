@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "active": "cms9dyk7l7sop",
+  "active": "cms9drjw5aw6r",
   "chars": {
     "cms9dyk7l7sop": {
       "name": "Рао",
@@ -89,7 +89,7 @@
       "ancestry": "Человек"
     },
     "cms9drjw5aw6r": {
-      "name": "Новый персонаж",
+      "name": "Сзет",
       "level": 1,
       "abil": {
         "str": 10,
@@ -124,7 +124,8 @@
       "slots": {},
       "focus": {},
       "coin": {},
-      "bio": {}
+      "bio": {},
+      "_ts": 1785532101911
     }
   }
 }
