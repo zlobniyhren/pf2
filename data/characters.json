@@ -83,11 +83,17 @@
       "focus": {},
       "coin": {},
       "bio": {},
-      "_ts": 1785533363206,
+      "_ts": 1785533419965,
       "cls": "Монах",
       "bulk": "3",
       "ancestry": "Человек",
-      "itemsWorn": [],
+      "itemsWorn": [
+        {
+          "name": "Зелье лечения",
+          "bulk": "1",
+          "qty": ""
+        }
+      ],
       "itemsReady": [],
       "itemsOther": []
     },
