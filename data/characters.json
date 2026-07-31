@@ -2,44 +2,6 @@
   "v": 1,
   "active": "cms9dyk7l7sop",
   "chars": {
-    "cms9drjw5aw6r": {
-      "name": "Новый персонаж",
-      "level": 1,
-      "abil": {
-        "str": 10,
-        "dex": 10,
-        "con": 10,
-        "int": 10,
-        "wis": 10,
-        "cha": 10
-      },
-      "hp": {},
-      "ac": {},
-      "shield": {},
-      "saves": {},
-      "classdc": {
-        "key": "str"
-      },
-      "skills": {},
-      "melee": [
-        {},
-        {},
-        {}
-      ],
-      "ranged": [
-        {},
-        {},
-        {}
-      ],
-      "wprof": {},
-      "spell": {
-        "key": "int"
-      },
-      "slots": {},
-      "focus": {},
-      "coin": {},
-      "bio": {}
-    },
     "cms9dyk7l7sop": {
       "name": "Рао",
       "level": "4",
@@ -121,7 +83,47 @@
       "focus": {},
       "coin": {},
       "bio": {},
-      "_ts": 1785530642952
+      "_ts": 1785531173217,
+      "cls": "Монах",
+      "bulk": "3"
+    },
+    "cms9drjw5aw6r": {
+      "name": "Новый персонаж",
+      "level": 1,
+      "abil": {
+        "str": 10,
+        "dex": 10,
+        "con": 10,
+        "int": 10,
+        "wis": 10,
+        "cha": 10
+      },
+      "hp": {},
+      "ac": {},
+      "shield": {},
+      "saves": {},
+      "classdc": {
+        "key": "str"
+      },
+      "skills": {},
+      "melee": [
+        {},
+        {},
+        {}
+      ],
+      "ranged": [
+        {},
+        {},
+        {}
+      ],
+      "wprof": {},
+      "spell": {
+        "key": "int"
+      },
+      "slots": {},
+      "focus": {},
+      "coin": {},
+      "bio": {}
     }
   }
 }
