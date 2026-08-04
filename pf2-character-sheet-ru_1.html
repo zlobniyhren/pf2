@@ -714,8 +714,12 @@
 
   function strikeHTML(kind,i){
     var abilSel=kind==='melee'
-      ? '<label class="f"><span class="lbl">Характеристика</span><select class="fld sel" data-bind="'+kind+'.'+i+'.abil"><option value="str">СИЛ</option><option value="dex">ЛВК (фехт.)</option></select></label>'
-      : '<label class="f"><span class="lbl">Характеристика</span><select class="fld sel" data-bind="'+kind+'.'+i+'.abil"><option value="dex">ЛВК</option><option value="str">СИЛ</option></select></label>';
+      ? '<label class="f"><span class="lbl">Хар-ка атаки</span><select class="fld sel" title="Только для броска атаки. Урон всегда считается от СИЛ." data-bind="'+kind+'.'+i+'.abil"><option value="str">СИЛ</option><option value="dex">ЛВК (фехт.)</option></select></label>'
+      : '<label class="f"><span class="lbl">Хар-ка атаки</span><select class="fld sel" title="Только для броска атаки." data-bind="'+kind+'.'+i+'.abil"><option value="dex">ЛВК</option><option value="str">СИЛ</option></select></label>';
+    var dbonusPh=kind==='melee'?'СИЛ':'0';
+    var dbonusTitle=kind==='melee'
+      ? 'По умолчанию — модификатор СИЛ (урон в ближнем бою не зависит от ЛВК). Впишите своё значение, чтобы переопределить.'
+      : 'По умолчанию — 0. Для метательного оружия и оружия с дескриптором «толкающее» впишите модификатор СИЛ (для толкающего — половину, вниз).';
     var p=kind+'.'+i;
     return '<div class="strike">'+
       '<label class="f wide"><span class="lbl">Оружие</span><input class="fld" data-bind="'+p+'.name"></label>'+
@@ -726,7 +730,7 @@
       '<label class="f"><span class="lbl">Кол-во</span><input class="fld num" inputmode="numeric" placeholder="1" data-bind="'+p+'.dcount"></label>'+
       '<label class="f"><span class="lbl">Кость</span><select class="fld sel" data-bind="'+p+'.ddie"><option value="">—</option>'+
         DICE.map(function(d){return '<option value="'+d+'">к'+d+'</option>';}).join('')+'</select></label>'+
-      '<label class="f"><span class="lbl">Бонус урона</span><input class="fld num" inputmode="numeric" placeholder="хар." data-bind="'+p+'.dbonus"></label>'+
+      '<label class="f"><span class="lbl">Бонус урона</span><input class="fld num" inputmode="numeric" placeholder="'+dbonusPh+'" title="'+dbonusTitle+'" data-bind="'+p+'.dbonus"></label>'+
       '<div class="segwrap"><span class="lbl">Тип урона</span><div class="chips">'+
         DMGT.map(function(t){return '<button type="button" data-choice-path="'+p+'.dtype" data-v="'+t[0]+'" title="'+t[2]+'">'+t[1]+'</button>';}).join('')+
       '</div></div>'+
@@ -930,12 +934,14 @@
         var die=num(get(p+'.ddie'));
         var braw=get(p+'.dbonus');
         var auto=(braw===''||braw==null);
-        var bon=auto?(kind==='melee'?mod(ab):0):num(braw);
+        /* Урон ближнего боя всегда от СИЛ, даже если атака идёт от ЛВК (фехтовальное).
+           Дальнобойное по умолчанию без бонуса: для метательного/бросающего впишите СИЛ вручную. */
+        var bon=auto?(kind==='melee'?mod('str'):0):num(braw);
         var tp=DMGT.filter(function(d){return d[0]===get(p+'.dtype');})[0];
         var vEl=document.getElementById('dmg-'+kind+i), nEl=document.getElementById('dmgn-'+kind+i);
         if(cnt>0&&die>0){
           vEl.textContent=(cnt+bon)+'–'+(cnt*die+bon)+(tp?' '+tp[2]:'');
-          nEl.textContent=cnt+'к'+die+(bon?sign(bon):'')+(auto&&bon?' (бонус от характеристики)':'');
+          nEl.textContent=cnt+'к'+die+(bon?sign(bon):'')+(auto&&bon?' (СИЛ)':'');
         }else{
           vEl.textContent='—';
           nEl.textContent='укажите кол-во и кость';
