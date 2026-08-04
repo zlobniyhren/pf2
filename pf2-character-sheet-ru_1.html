@@ -233,10 +233,11 @@
       <div class="bar">Вес и деньги</div>
       <div class="panel">
         <div class="hprow small">
-          <label class="f"><span class="lbl">Текущий вес</span><input class="fld num" inputmode="numeric" data-bind="bulk"></label>
+          <div class="f"><span class="lbl">Текущий вес</span><div class="fld ro" id="bulkNow">0</div></div>
           <div class="f"><span class="lbl">Нагруженность</span><div class="fld ro" id="bulkEnc">5</div></div>
           <div class="f"><span class="lbl">Максимум</span><div class="fld ro" id="bulkMax">10</div></div>
         </div>
+        <div class="formula" id="bulkNote"></div>
         <div class="hprow small">
           <label class="f"><span class="lbl">ММ</span><input class="fld num" inputmode="numeric" data-bind="coin.cp"></label>
           <label class="f"><span class="lbl">СМ</span><input class="fld num" inputmode="numeric" data-bind="coin.sp"></label>
@@ -389,6 +390,8 @@
   #app .item-add{background:transparent;border:1px dashed var(--line);border-radius:3px;color:var(--muted);font:600 12px/1 -apple-system,sans-serif;letter-spacing:.06em;min-height:42px;cursor:pointer;}
   .item-add:active{transform:translateY(1px);}
   .item-empty{font-size:12px;color:var(--muted);font-style:italic;}
+  .fld.ro.warn{border-color:var(--accent);color:var(--accent);}
+  .fld.ro.over{border-color:var(--blood);color:var(--blood);}
   @media (max-width:460px){
     .item-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 44px;}
     .item-row .f.iname{grid-column:1/-1;}
@@ -483,7 +486,7 @@
 (function(){
   var app=document.getElementById('app');
   var KEY='pf2-sheet-v1';
-  var BUILD='2026-08-01 · 6';
+  var BUILD='2026-08-01 · 7';
   var RANKS=[['Н',0],['И',2],['Э',4],['М',6],['Л',8]];
   var ABIL=[['str','СИЛ','Сила'],['dex','ЛВК','Ловкость'],['con','ВЫН','Выносливость'],['int','ИНТ','Интеллект'],['wis','МДР','Мудрость'],['cha','ХАР','Харизма']];
   var SKILLS=[['acro','Акробатика','dex',1],['athl','Атлетика','str',1],['thie','Воровство','dex',1],['surv','Выживание','wis',0],
@@ -768,7 +771,7 @@
         '<label class="f iname"><span class="lbl">Название</span>'+
           '<input class="fld" placeholder="Название" data-bind="'+p+'.name"></label>'+
         '<label class="f"><span class="lbl">Вес</span>'+
-          '<input class="fld num" placeholder="—" data-bind="'+p+'.bulk"></label>'+
+          '<input class="fld num" placeholder="1 / Л" data-bind="'+p+'.bulk"></label>'+
         '<label class="f"><span class="lbl">Кол-во</span>'+
           '<input class="fld num" inputmode="numeric" placeholder="1" data-bind="'+p+'.qty"></label>'+
         '<button type="button" class="item-del" data-item-del="'+key+'" data-i="'+i+'" '+
@@ -777,6 +780,33 @@
     }).join('');
     if(!rows)rows='<div class="item-empty">Пока пусто — добавьте первый предмет</div>';
     return rows+'<button type="button" class="item-add" data-item-add="'+key+'">+ Добавить предмет</button>';
+  }
+  /* «1» / «0.5» — обычный вес, «Л» — лёгкий (10 Л = 1), «—» и пусто — незначительный */
+  function parseBulk(v){
+    var s=String(v==null?'':v).trim().toLowerCase().replace(',','.');
+    if(!s||/^[—–-]+$/.test(s))return {b:0,l:0};
+    var m=s.match(/\d+(?:\.\d+)?/);
+    var n=m?parseFloat(m[0]):1;
+    if(isNaN(n))n=0;
+    return /[лl]/.test(s)?{b:0,l:n}:{b:n,l:0};
+  }
+  function bulkTotal(){
+    var b=0,l=0;
+    ITEMS.forEach(function(key){
+      var arr=get(key);
+      if(!Array.isArray(arr))return;
+      arr.forEach(function(it){
+        if(!it)return;
+        var q=(it.qty===''||it.qty==null)?1:num(it.qty);
+        if(q<0)q=0;
+        var p=parseBulk(it.bulk);
+        b+=p.b*q;l+=p.l*q;
+      });
+    });
+    var coins=num(get('coin.cp'))+num(get('coin.sp'))+num(get('coin.gp'))+num(get('coin.pp'));
+    var coinB=Math.floor(coins/1000);
+    b=Math.round(b*100)/100;
+    return {b:b,l:l,coins:coins,coinB:coinB,total:Math.round((b+Math.floor(l/10)+coinB)*100)/100};
   }
   function itemCount(key){
     var n=itemArr(key).length;
@@ -788,7 +818,7 @@
     if(!box)return;
     box.innerHTML=itemsHTML(key);
     fillBinds(box);
-    itemCount(key);
+    itemCount(key);refresh();
     if(focusLast){
       var ins=box.querySelectorAll('.item-row .iname input');
       if(ins.length)ins[ins.length-1].focus();
@@ -919,8 +949,20 @@
     document.getElementById('spellAtk').textContent=sign(mod(sk)+sp);
     document.getElementById('spellDC').textContent=10+mod(sk)+sp;
 
-    document.getElementById('bulkEnc').textContent=5+mod('str');
-    document.getElementById('bulkMax').textContent=10+mod('str');
+    var encB=5+mod('str'), maxB=10+mod('str');
+    document.getElementById('bulkEnc').textContent=encB;
+    document.getElementById('bulkMax').textContent=maxB;
+    var bt=bulkTotal(), bNow=document.getElementById('bulkNow');
+    bNow.textContent=bt.total;
+    bNow.classList.toggle('over',bt.total>maxB);
+    bNow.classList.toggle('warn',bt.total>encB&&bt.total<=maxB);
+    var note=[];
+    if(bt.b||bt.l)note.push('предметы '+(bt.b?bt.b+(bt.l?' + ':''):'')+(bt.l?bt.l+' Л':''));
+    if(bt.coins)note.push('монеты '+bt.coins+(bt.coinB?' (+'+bt.coinB+')':' (меньше 1)'));
+    if(bt.l)note.push('10 Л = 1');
+    if(bt.total>maxB)note.push('сверх предела — не поднять');
+    else if(bt.total>encB)note.push('нагружен: −10 футов к скорости, неуклюжий 1');
+    document.getElementById('bulkNote').textContent=note.length?note.join('   ·   '):'считается по строкам предметов и монетам';
 
     var cur=num(get('hp.cur')), max=num(get('hp.max')), tmp=num(get('hp.temp'));
     document.getElementById('hpFill').style.width=(max>0?Math.max(0,Math.min(100,cur/max*100)):0)+'%';
