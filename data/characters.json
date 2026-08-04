@@ -24,7 +24,7 @@
           "rank": 1
         },
         "ref": {
-          "rank": 1
+          "rank": 2
         },
         "will": {
           "rank": 1
@@ -44,7 +44,11 @@
       "melee": [
         {
           "rank": 1,
-          "abil": "dex"
+          "abil": "dex",
+          "name": "Когти",
+          "dtype": "s",
+          "ddie": "6",
+          "dcount": "1"
         },
         {},
         {}
@@ -62,7 +66,7 @@
       "focus": {},
       "coin": {},
       "bio": {},
-      "_ts": 1785859836091,
+      "_ts": 1785860092343,
       "ancestry": "Котолюд ",
       "itemsWorn": [],
       "itemsReady": [],
