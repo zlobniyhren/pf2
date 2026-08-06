@@ -100,9 +100,15 @@
       "focus": {},
       "coin": {},
       "bio": {},
-      "_ts": 1786022989157,
+      "_ts": 1786023044251,
       "ancestry": "Когтистый Котолюд ",
-      "itemsWorn": [],
+      "itemsWorn": [
+        {
+          "name": "Зелье здоровья ",
+          "bulk": "1",
+          "qty": "1"
+        }
+      ],
       "itemsReady": [],
       "itemsOther": [],
       "background": "Мечник Алдори",
