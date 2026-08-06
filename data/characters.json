@@ -13,10 +13,15 @@
         "wis": 10,
         "cha": "14"
       },
-      "hp": {},
+      "hp": {
+        "cur": "20",
+        "max": "20"
+      },
       "ac": {
         "type": "none",
-        "rank": 1
+        "rank": 1,
+        "cap": 4,
+        "misc": ""
       },
       "shield": {},
       "saves": {
@@ -27,17 +32,43 @@
           "rank": 2
         },
         "will": {
-          "rank": 1
+          "rank": 2
         },
         "perc": {
-          "rank": 1
+          "rank": 2
         }
       },
       "classdc": {
-        "key": "dex"
+        "key": "dex",
+        "rank": 1
       },
       "skills": {
         "acro": {
+          "rank": 1
+        },
+        "athl": {
+          "rank": 1
+        },
+        "thie": {
+          "rank": 0
+        },
+        "surv": {
+          "rank": 1
+        },
+        "dipl": {
+          "rank": 0
+        },
+        "inti": {
+          "rank": 0
+        },
+        "dece": {
+          "rank": 1
+        },
+        "medi": {
+          "rank": 1
+        },
+        "lore1": {
+          "label": "Военное дело ",
           "rank": 1
         }
       },
@@ -66,11 +97,14 @@
       "focus": {},
       "coin": {},
       "bio": {},
-      "_ts": 1785860092343,
-      "ancestry": "Котолюд ",
+      "_ts": 1786020479166,
+      "ancestry": "Когтистый Котолюд ",
       "itemsWorn": [],
       "itemsReady": [],
-      "itemsOther": []
+      "itemsOther": [],
+      "background": "Мечник Алдори",
+      "cls": "Сорвиголова",
+      "langs": "Общий, аммурун "
     },
     "cms9dyk7l7sop": {
       "name": "Рао",
