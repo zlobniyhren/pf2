@@ -22,10 +22,11 @@
         "temp": ""
       },
       "ac": {
-        "type": "none",
+        "type": "light",
         "rank": 1,
         "cap": 4,
-        "misc": ""
+        "misc": "2",
+        "item": "1"
       },
       "shield": {},
       "saves": {
@@ -116,7 +117,7 @@
       "bio": {
         "ethnos": "Котолюд "
       },
-      "_ts": 1786116173546,
+      "_ts": 1786116207199,
       "ancestry": "Когтистый Котолюд ",
       "itemsWorn": [
         {
