@@ -4,7 +4,7 @@
   "chars": {
     "cms9drjw5aw6r": {
       "name": "Сзет ",
-      "level": 1,
+      "level": "1",
       "abil": {
         "str": "12",
         "dex": "18",
@@ -110,7 +110,7 @@
       "focus": {},
       "coin": {},
       "bio": {},
-      "_ts": 1786114041488,
+      "_ts": 1786115391741,
       "ancestry": "Когтистый Котолюд ",
       "itemsWorn": [
         {
@@ -123,7 +123,8 @@
       "itemsOther": [],
       "background": "Мечник Алдори",
       "cls": "Сорвиголова",
-      "langs": "Общий, аммурун "
+      "langs": "Общий, аммурун ",
+      "hero": 1
     },
     "cms9dyk7l7sop": {
       "name": "Рао",
