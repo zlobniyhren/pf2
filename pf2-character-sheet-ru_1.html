@@ -159,6 +159,15 @@
           <label class="f"><span class="lbl">Максимум</span><input class="fld num big" inputmode="numeric" data-bind="hp.max"></label>
           <label class="f"><span class="lbl">Временные</span><input class="fld num big" inputmode="numeric" data-bind="hp.temp"></label>
         </div>
+        <div class="hprow small">
+          <label class="f"><span class="lbl">ПЗ народа</span><input class="fld num" inputmode="numeric" data-bind="hp.anc"></label>
+          <label class="f"><span class="lbl">ПЗ класса за уровень</span><input class="fld num" inputmode="numeric" data-bind="hp.cls"></label>
+          <label class="f"><span class="lbl">Прочее за уровень</span><input class="fld num" inputmode="numeric" data-bind="hp.per" placeholder="0"></label>
+          <div class="segwrap"><span class="lbl">Авто-максимум</span>
+            <div class="chips"><button type="button" data-choice-path="hp.auto" data-v="1">Считать</button></div>
+          </div>
+        </div>
+        <div class="formula" id="hpFormula"></div>
         <div class="hpctl">
           <button class="btn blood" data-hp="-10">−10</button>
           <button class="btn blood" data-hp="-5">−5</button>
@@ -486,7 +495,7 @@
 (function(){
   var app=document.getElementById('app');
   var KEY='pf2-sheet-v1';
-  var BUILD='2026-08-01 · 7';
+  var BUILD='2026-08-07 · 8';
   var RANKS=[['Н',0],['И',2],['Э',4],['М',6],['Л',8]];
   var ABIL=[['str','СИЛ','Сила'],['dex','ЛВК','Ловкость'],['con','ВЫН','Выносливость'],['int','ИНТ','Интеллект'],['wis','МДР','Мудрость'],['cha','ХАР','Харизма']];
   var SKILLS=[['acro','Акробатика','dex',1],['athl','Атлетика','str',1],['thie','Воровство','dex',1],['surv','Выживание','wis',0],
@@ -498,8 +507,19 @@
   var WPROF=[['simple','Простое'],['martial','Особое'],['adv','Прочее'],['unarmed','Безоружное']];
   var DICE=[4,6,8,10,12];
   var DMGT=[['b','Д','дробящий'],['p','К','колющий'],['s','Р','режущий']];
-  var ARMOR=[['none','Без брони',null],['light','Лёгкая',4],['medium','Средняя',2],['heavy','Тяжёлая',0]];
+  /* предел ЛВК зависит от конкретной брони, поэтому храним диапазон категории как подсказку */
+  var ARMOR=[['none','Без брони',null],['light','Лёгкая','+3…+5'],['medium','Средняя','+1…+2'],['heavy','Тяжёлая','+0…+1']];
   var ITEMS=['itemsWorn','itemsReady','itemsOther'];
+
+  /* ПЗ за уровень у классов и стартовые ПЗ народов — для автоподстановки по названию */
+  var CLASS_HP={'алхимик':8,'варвар':12,'бард':8,'чемпион':10,'воитель':10,'жрец':8,'клирик':8,'друид':8,'воин':10,'боец':10,'монах':10,'следопыт':10,'рейнджер':10,'плут':8,'разбойник':8,'чародей':6,'колдун':6,'ведьма':6,'волшебник':6,'маг':8,'магус':8,'оракул':8,'сыщик':8,'следователь':8,'фехтовальщик':10,'авантюрист':10,'призыватель':10,'стрелок':8,'ганслингер':8,'изобретатель':8,'инвентор':8,'тавматург':8,'психик':6,'кинетик':8,'анимист':8};
+  var ANC_HP={'полурослик':6,'полуэльф':8,'полуорк':8,'человек':8,'дварф':10,'гном':8,'эльф':6,'гоблин':6,'хобгоблин':8,'орк':10,'катфолк':8,'кобольд':6,'ратфолк':6,'тенгу':6,'лешен':10,'леший':10,'ящеролюд':8,'фетчлинг':8,'андроид':8,'азарке':8,'нагадзи':8,'гхоран':8,'кицунэ':8,'вишкания':6,'стрикс':8};
+  function guessHP(text,dict){
+    var s=String(text||'').toLowerCase();
+    var keys=Object.keys(dict).sort(function(a,b){return b.length-a.length;});
+    for(var i=0;i<keys.length;i++)if(s.indexOf(keys[i])!==-1)return dict[keys[i]];
+    return null;
+  }
 
   var blob={v:1,active:null,chars:{}};
   var saveTimer=null, hasStore=!!(window.storage&&window.storage.get), freshId=null;
@@ -509,9 +529,10 @@
   function S(){return blob.chars[blob.active];}
   function get(p){var o=S();var ks=p.split('.');for(var i=0;i<ks.length;i++){if(o==null)return undefined;o=o[ks[i]];}return o;}
   function set(p,v){var o=S();var ks=p.split('.');for(var i=0;i<ks.length-1;i++){if(o[ks[i]]==null)o[ks[i]]={};o=o[ks[i]];}o[ks[ks.length-1]]=v;queueSave();}
-  function num(v){if(v===''||v==null)return 0;var n=parseInt(String(v).replace(/[^\-0-9]/g,''),10);return isNaN(n)?0:n;}
+  /* берём первое целое число из строки: «1.5» → 1, «2,0» → 2, а не склейку цифр */
+  function num(v){if(v===''||v==null)return 0;var m=String(v).match(/-?\d+/);return m?parseInt(m[0],10):0;}
   function sign(n){return (n>=0?'+':'')+n;}
-  function lvl(){return num(get('level')||1);}
+  function lvl(){var n=num(get('level'));if(n<1)n=1;if(n>20)n=20;return n;}
   function mod(k){var s=get('abil.'+k);return Math.floor(((s===''||s==null?10:num(s))-10)/2);}
   function prof(r){r=num(r);return r===0?0:RANKS[r][1]+lvl();}
   function status(t){document.getElementById('status').textContent=t;}
@@ -693,7 +714,7 @@
   document.getElementById('abilGrid').innerHTML=ABIL.map(function(a){
     return '<div class="abil"><div class="abil-mod" id="mod-'+a[0]+'">+0</div><div class="abil-body">'+
       '<span class="lbl">'+a[2]+'</span><input class="fld num" inputmode="numeric" data-bind="abil.'+a[0]+'"></div></div>';
-  }).join('');
+  }).join('')+'<div class="formula" id="abilNote"></div>';
 
   document.getElementById('savesGrid').innerHTML='<div class="hprow">'+SAVES.map(function(s){
     return '<div class="f"><span class="lbl">'+s[1]+' ('+ABIL.filter(function(a){return a[0]===s[2];})[0][1]+')</span>'+
@@ -902,6 +923,10 @@
   function refresh(){
     ABIL.forEach(function(a){document.getElementById('mod-'+a[0]).textContent=sign(mod(a[0]));});
 
+    var boosts=[5,10,15,20].filter(function(x){return lvl()>=x;});
+    document.getElementById('abilNote').textContent='Повышения: на 5, 10, 15 и 20 уровнях — по 4 разных характеристики; при значении 18+ повышение даёт только +1.'+
+      (boosts.length?('   ·   уже получены на уровнях: '+boosts.join(', ')):'');
+
     var dex=mod('dex'), cap=get('ac.cap');
     if(cap!==''&&cap!=null)dex=Math.min(dex,num(cap));
     var acP=prof(get('ac.rank'));
@@ -909,7 +934,7 @@
     document.getElementById('acTotal').textContent=ac;
     var at=get('ac.type'), atRow=ARMOR.filter(function(a){return a[0]===at;})[0];
     document.getElementById('acFormula').textContent='10 + ЛВК '+sign(dex)+' + умение '+sign(acP)+' + предмет '+sign(num(get('ac.item')))+' + прочее '+sign(num(get('ac.misc')))+
-      (atRow?('   ·   '+atRow[1].toLowerCase()+(atRow[2]==null?', предел ЛВК не ограничен':', обычный предел ЛВК +'+atRow[2])):'');
+      (atRow?('   ·   '+atRow[1].toLowerCase()+(atRow[2]==null?', предел ЛВК не ограничен':', предел ЛВК обычно '+atRow[2]+' — точный впишите из описания брони')):'');
 
     SAVES.forEach(function(s){
       var t=mod(s[2])+prof(get('saves.'+s[0]+'.rank'))+num(get('saves.'+s[0]+'.item'));
@@ -940,7 +965,9 @@
         var tp=DMGT.filter(function(d){return d[0]===get(p+'.dtype');})[0];
         var vEl=document.getElementById('dmg-'+kind+i), nEl=document.getElementById('dmgn-'+kind+i);
         if(cnt>0&&die>0){
-          vEl.textContent=(cnt+bon)+'–'+(cnt*die+bon)+(tp?' '+tp[2]:'');
+          /* по правилам урон не опускается ниже 1 */
+          var dLo=Math.max(1,cnt+bon),dHi=Math.max(1,cnt*die+bon);
+          vEl.textContent=dLo+'–'+dHi+(tp?' '+tp[2]:'');
           nEl.textContent=cnt+'к'+die+(bon?sign(bon):'')+(auto&&bon?' (СИЛ)':'');
         }else{
           vEl.textContent='—';
@@ -970,6 +997,21 @@
     else if(bt.total>encB)note.push('нагружен: −10 футов к скорости, неуклюжий 1');
     document.getElementById('bulkNote').textContent=note.length?note.join('   ·   '):'считается по строкам предметов и монетам';
 
+    /* авто-максимум ПЗ: народ + (класс + ТЕЛ + прочее) × уровень */
+    var hpAuto=get('hp.auto')==='1';
+    var maxIn=app.querySelector('[data-bind="hp.max"]');
+    if(hpAuto){
+      var perLvl=num(get('hp.cls'))+mod('con')+num(get('hp.per'));
+      var autoMax=num(get('hp.anc'))+perLvl*lvl();
+      if(autoMax<0)autoMax=0;
+      if(num(get('hp.max'))!==autoMax)set('hp.max',autoMax);
+      if(maxIn&&maxIn!==document.activeElement)maxIn.value=autoMax;
+      document.getElementById('hpFormula').textContent=num(get('hp.anc'))+' народ + ('+num(get('hp.cls'))+' класс + ТЕЛ '+sign(mod('con'))+(num(get('hp.per'))?' + прочее '+sign(num(get('hp.per'))):'')+') × ур. '+lvl()+' = '+autoMax;
+    }else{
+      document.getElementById('hpFormula').textContent='включите «Считать» — максимум выйдет сам: народ + (класс + ТЕЛ + прочее) × уровень';
+    }
+    if(maxIn)maxIn.readOnly=hpAuto;
+
     var cur=num(get('hp.cur')), max=num(get('hp.max')), tmp=num(get('hp.temp'));
     document.getElementById('hpFill').style.width=(max>0?Math.max(0,Math.min(100,cur/max*100)):0)+'%';
     document.getElementById('hpLabel').textContent=cur+' / '+max+(tmp>0?'  (+'+tmp+' врем.)':'');
@@ -993,7 +1035,19 @@
   /* ---------- события ---------- */
   app.addEventListener('input',function(e){
     var t=e.target;
-    if(t.dataset&&t.dataset.bind){set(t.dataset.bind,t.value);if(t.classList.contains('ta'))grow(t);refresh();}
+    if(t.dataset&&t.dataset.bind){
+      set(t.dataset.bind,t.value);
+      /* по названию класса/народа подставляем ПЗ для авторасчёта */
+      if(t.dataset.bind==='cls'||t.dataset.bind==='ancestry'){
+        var path=t.dataset.bind==='cls'?'hp.cls':'hp.anc';
+        var g=guessHP(t.value,t.dataset.bind==='cls'?CLASS_HP:ANC_HP);
+        if(g!=null&&num(get(path))!==g){
+          set(path,g);
+          var f=app.querySelector('[data-bind="'+path+'"]');if(f)f.value=g;
+        }
+      }
+      if(t.classList.contains('ta'))grow(t);refresh();
+    }
   });
   app.addEventListener('change',function(e){
     var t=e.target;
@@ -1017,14 +1071,6 @@
       set(path,v);
       var sib=t.parentNode.querySelectorAll('button');
       for(var c=0;c<sib.length;c++)sib[c].classList.toggle('on',sib[c]===t&&v!=='');
-      if(path==='ac.type'){
-        var row=ARMOR.filter(function(a){return a[0]===v;})[0];
-        var capNow=get('ac.cap');
-        if(row&&(capNow===''||capNow==null)&&row[2]!=null){
-          set('ac.cap',row[2]);
-          var capIn=app.querySelector('[data-bind="ac.cap"]');if(capIn)capIn.value=row[2];
-        }
-      }
       refresh();return;
     }
     if(t.dataset.hero!==undefined){
