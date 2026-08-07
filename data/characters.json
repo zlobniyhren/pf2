@@ -2,168 +2,6 @@
   "v": 1,
   "active": "cms9drjw5aw6r",
   "chars": {
-    "cms9drjw5aw6r": {
-      "name": "Сзет ",
-      "level": "1",
-      "abil": {
-        "str": "12",
-        "dex": "18",
-        "con": "14",
-        "int": 10,
-        "wis": 10,
-        "cha": "14"
-      },
-      "hp": {
-        "cur": "20",
-        "max": 20,
-        "auto": "1",
-        "anc": "8",
-        "cls": "10",
-        "temp": ""
-      },
-      "ac": {
-        "type": "light",
-        "rank": 1,
-        "cap": 4,
-        "misc": "2",
-        "item": "1"
-      },
-      "shield": {},
-      "saves": {
-        "fort": {
-          "rank": 1
-        },
-        "ref": {
-          "rank": 2
-        },
-        "will": {
-          "rank": 2
-        },
-        "perc": {
-          "rank": 2
-        }
-      },
-      "classdc": {
-        "key": "dex",
-        "rank": 1
-      },
-      "skills": {
-        "acro": {
-          "rank": 1
-        },
-        "athl": {
-          "rank": 1
-        },
-        "thie": {
-          "rank": 0
-        },
-        "surv": {
-          "rank": 1
-        },
-        "dipl": {
-          "rank": 0
-        },
-        "inti": {
-          "rank": 0
-        },
-        "dece": {
-          "rank": 1
-        },
-        "medi": {
-          "rank": 1
-        },
-        "lore1": {
-          "label": "Военное дело ",
-          "rank": 1
-        },
-        "stea": {
-          "rank": 1
-        }
-      },
-      "melee": [
-        {
-          "rank": 1,
-          "abil": "dex",
-          "name": "Когти",
-          "dtype": "s",
-          "ddie": "6",
-          "dcount": "1"
-        },
-        {
-          "name": "Меч Алдори",
-          "rank": 1,
-          "abil": "dex",
-          "ddie": "8",
-          "dcount": "1"
-        },
-        {}
-      ],
-      "ranged": [
-        {},
-        {},
-        {}
-      ],
-      "wprof": {},
-      "spell": {
-        "key": "int"
-      },
-      "slots": {},
-      "focus": {},
-      "coin": {
-        "gp": "6",
-        "sp": "3",
-        "cp": "0"
-      },
-      "bio": {
-        "ethnos": "Котолюд "
-      },
-      "_ts": 1786116288029,
-      "ancestry": "Когтистый Котолюд ",
-      "itemsWorn": [
-        {
-          "name": "Меч алдори",
-          "bulk": "1",
-          "qty": "1"
-        },
-        {
-          "name": "Кожаный доспех ",
-          "bulk": "1",
-          "qty": "2"
-        },
-        {
-          "name": "Ручной арбалет ",
-          "bulk": "",
-          "qty": "1"
-        },
-        {
-          "name": "",
-          "bulk": "",
-          "qty": ""
-        }
-      ],
-      "itemsReady": [
-        {
-          "name": "Набор искателя приключений ",
-          "bulk": "1",
-          "qty": "1"
-        },
-        {
-          "name": "20 болтов ",
-          "bulk": "0.1",
-          "qty": "20"
-        }
-      ],
-      "itemsOther": [],
-      "background": "Мечник Алдори",
-      "cls": "Сорвиголова",
-      "langs": "Общий, аммурун ",
-      "hero": 0,
-      "deity": "Безбожник ",
-      "align": "Верность, победа и хитрожопость",
-      "featsClass": "Двойное парирование \nКураж\nТочный удар (+2 к дамагу) или 2д6 в финишире \nФинишер",
-      "featsAncestry": "Удача кота",
-      "featsBonus": "Финт +1 (из за фехтовальщика)"
-    },
     "cms9dyk7l7sop": {
       "name": "Рао",
       "level": "4",
@@ -261,6 +99,172 @@
       ],
       "itemsReady": [],
       "itemsOther": []
+    },
+    "cms9drjw5aw6r": {
+      "name": "Сзет ",
+      "level": "1",
+      "abil": {
+        "str": "12",
+        "dex": "18",
+        "con": "14",
+        "int": 10,
+        "wis": 10,
+        "cha": "14"
+      },
+      "hp": {
+        "cur": "20",
+        "max": 20,
+        "auto": "1",
+        "anc": "8",
+        "cls": "10",
+        "temp": ""
+      },
+      "ac": {
+        "type": "light",
+        "rank": 1,
+        "cap": 4,
+        "misc": "0",
+        "item": "1"
+      },
+      "shield": {},
+      "saves": {
+        "fort": {
+          "rank": 1
+        },
+        "ref": {
+          "rank": 2
+        },
+        "will": {
+          "rank": 2
+        },
+        "perc": {
+          "rank": 2
+        }
+      },
+      "classdc": {
+        "key": "dex",
+        "rank": 1
+      },
+      "skills": {
+        "acro": {
+          "rank": 1
+        },
+        "athl": {
+          "rank": 1
+        },
+        "thie": {
+          "rank": 0
+        },
+        "surv": {
+          "rank": 1
+        },
+        "dipl": {
+          "rank": 0
+        },
+        "inti": {
+          "rank": 0
+        },
+        "dece": {
+          "rank": 1
+        },
+        "medi": {
+          "rank": 1
+        },
+        "lore1": {
+          "label": "Военное дело ",
+          "rank": 1
+        },
+        "stea": {
+          "rank": 1
+        }
+      },
+      "melee": [
+        {
+          "rank": 1,
+          "abil": "dex",
+          "name": "Когти",
+          "dtype": "s",
+          "ddie": "6",
+          "dcount": "1"
+        },
+        {
+          "name": "Меч Алдори",
+          "rank": 1,
+          "abil": "dex",
+          "ddie": "8",
+          "dcount": "1"
+        },
+        {}
+      ],
+      "ranged": [
+        {},
+        {},
+        {}
+      ],
+      "wprof": {},
+      "spell": {
+        "key": "int"
+      },
+      "slots": {},
+      "focus": {},
+      "coin": {
+        "gp": "6",
+        "sp": "3",
+        "cp": "0"
+      },
+      "bio": {
+        "ethnos": "Котолюд "
+      },
+      "_ts": 1786119278764,
+      "ancestry": "Когтистый Котолюд ",
+      "itemsWorn": [
+        {
+          "name": "Меч алдори",
+          "bulk": "1",
+          "qty": "1"
+        },
+        {
+          "name": "Кожаный доспех ",
+          "bulk": "1",
+          "qty": "2"
+        },
+        {
+          "name": "Ручной арбалет ",
+          "bulk": "",
+          "qty": "1"
+        },
+        {
+          "name": "",
+          "bulk": "",
+          "qty": ""
+        }
+      ],
+      "itemsReady": [
+        {
+          "name": "Набор искателя приключений ",
+          "bulk": "1",
+          "qty": "1"
+        },
+        {
+          "name": "20 болтов ",
+          "bulk": "0.1",
+          "qty": "20"
+        }
+      ],
+      "itemsOther": [],
+      "background": "Мечник Алдори",
+      "cls": "Сорвиголова",
+      "langs": "Общий, аммурун ",
+      "hero": 0,
+      "deity": "Безбожник ",
+      "align": "Верность, победа и хитрожопость",
+      "featsClass": "Двойное парирование \nКураж\nТочный удар (+2 к дамагу) или 2д6 в финишире \nФинишер",
+      "featsAncestry": "Удача кота",
+      "featsBonus": "Финт +1 (из за фехтовальщика)",
+      "size": "Средний .",
+      "traits": "",
+      "conditions": "\n",
+      "notes": "Гласкен , Морис - артор , Андрей - мелисандра"
     },
     "cms9fut2jayn3": {
       "name": "Боб",
