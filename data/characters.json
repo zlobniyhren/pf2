@@ -2,6 +2,104 @@
   "v": 1,
   "active": "cms9drjw5aw6r",
   "chars": {
+    "cms9dyk7l7sop": {
+      "name": "Рао",
+      "level": "4",
+      "abil": {
+        "str": "16",
+        "dex": "16",
+        "con": "14",
+        "int": 10,
+        "wis": 10,
+        "cha": "12"
+      },
+      "hp": {
+        "cur": 46,
+        "max": 58,
+        "auto": "1",
+        "anc": "10",
+        "cls": "10"
+      },
+      "ac": {
+        "type": "none",
+        "cap": 4,
+        "rank": 2
+      },
+      "shield": {},
+      "saves": {
+        "fort": {
+          "rank": 2
+        },
+        "ref": {
+          "rank": 2
+        },
+        "will": {
+          "rank": 2
+        },
+        "perc": {
+          "rank": 1
+        }
+      },
+      "classdc": {
+        "key": "str",
+        "rank": 1
+      },
+      "skills": {
+        "acro": {
+          "rank": 1
+        },
+        "athl": {
+          "rank": 1
+        },
+        "dipl": {
+          "rank": 2
+        },
+        "inti": {
+          "rank": 1
+        },
+        "lore1": {
+          "rank": 1
+        }
+      },
+      "melee": [
+        {
+          "dtype": "b",
+          "rank": 1,
+          "item": "2",
+          "dcount": "2",
+          "ddie": "6",
+          "name": "Кулаки"
+        },
+        {},
+        {}
+      ],
+      "ranged": [
+        {},
+        {},
+        {}
+      ],
+      "wprof": {},
+      "spell": {
+        "key": "int"
+      },
+      "slots": {},
+      "focus": {},
+      "coin": {},
+      "bio": {},
+      "_ts": 1786116272325,
+      "cls": "Монах",
+      "bulk": "3",
+      "ancestry": "Человек",
+      "itemsWorn": [
+        {
+          "name": "Зелье лечения",
+          "bulk": "1",
+          "qty": ""
+        }
+      ],
+      "itemsReady": [],
+      "itemsOther": []
+    },
     "cms9drjw5aw6r": {
       "name": "Сзет ",
       "level": "1",
@@ -117,7 +215,7 @@
       "bio": {
         "ethnos": "Котолюд "
       },
-      "_ts": 1786119278764,
+      "_ts": 1786126398540,
       "ancestry": "Когтистый Котолюд ",
       "itemsWorn": [
         {
@@ -166,105 +264,8 @@
       "size": "Средний .",
       "traits": "",
       "conditions": "\n",
-      "notes": "Гласкен , Морис - артор , Андрей - мелисандра"
-    },
-    "cms9dyk7l7sop": {
-      "name": "Рао",
-      "level": "4",
-      "abil": {
-        "str": "16",
-        "dex": "16",
-        "con": "14",
-        "int": 10,
-        "wis": 10,
-        "cha": "12"
-      },
-      "hp": {
-        "cur": 46,
-        "max": 58,
-        "auto": "1",
-        "anc": "10",
-        "cls": "10"
-      },
-      "ac": {
-        "type": "none",
-        "cap": 4,
-        "rank": 2
-      },
-      "shield": {},
-      "saves": {
-        "fort": {
-          "rank": 2
-        },
-        "ref": {
-          "rank": 2
-        },
-        "will": {
-          "rank": 2
-        },
-        "perc": {
-          "rank": 1
-        }
-      },
-      "classdc": {
-        "key": "str",
-        "rank": 1
-      },
-      "skills": {
-        "acro": {
-          "rank": 1
-        },
-        "athl": {
-          "rank": 1
-        },
-        "dipl": {
-          "rank": 2
-        },
-        "inti": {
-          "rank": 1
-        },
-        "lore1": {
-          "rank": 1
-        }
-      },
-      "melee": [
-        {
-          "dtype": "b",
-          "rank": 1,
-          "item": "2",
-          "dcount": "2",
-          "ddie": "6",
-          "name": "Кулаки"
-        },
-        {},
-        {}
-      ],
-      "ranged": [
-        {},
-        {},
-        {}
-      ],
-      "wprof": {},
-      "spell": {
-        "key": "int"
-      },
-      "slots": {},
-      "focus": {},
-      "coin": {},
-      "bio": {},
-      "_ts": 1786116272325,
-      "cls": "Монах",
-      "bulk": "3",
-      "ancestry": "Человек",
-      "itemsWorn": [
-        {
-          "name": "Зелье лечения",
-          "bulk": "1",
-          "qty": ""
-        }
-      ],
-      "itemsReady": [],
-      "itemsOther": []
+      "notes": "Гласкен , Морис - артор , Андрей - мелисандра",
+      "xp": "."
     },
     "cms9fut2jayn3": {
       "name": "Боб",
