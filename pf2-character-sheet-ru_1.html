@@ -18,11 +18,17 @@
   <header class="topbar">
     <div class="brand">
       <span class="brand-mark">PF2</span>
-      <span class="brand-name">Бланк персонажа</span>
+      <span class="brand-name" id="brandName">Бланк персонажа</span>
+    </div>
+    <div class="modesw" id="modeSw">
+      <button type="button" class="on" data-mode="char">Персонаж</button>
+      <button type="button" data-mode="kingdom">Королевство</button>
     </div>
     <div class="topbar-tools">
       <select id="charSelect" class="fld sel" aria-label="Персонаж"></select>
-      <button class="btn" data-act="newChar">+ Персонаж</button>
+      <button class="btn" id="btnNewChar" data-act="newChar">+ Персонаж</button>
+      <select id="kingSelect" class="fld sel" aria-label="Королевство" hidden></select>
+      <button class="btn" id="btnNewKing" data-act="newKing" hidden>+ Королевство</button>
       <button class="btn" data-act="menu">Sync</button>
     </div>
     <div id="status" class="status">Загружаю…</div>
@@ -61,7 +67,8 @@
       <button class="btn" data-act="theme">Сменить тему</button>
       <button class="btn" data-act="export">Сохранить копию в файл</button>
       <button class="btn" data-act="import">Загрузить из файла</button>
-      <button class="btn danger" data-act="delChar">Удалить этого персонажа</button>
+      <button class="btn danger" id="btnDelChar" data-act="delChar">Удалить этого персонажа</button>
+      <button class="btn danger" id="btnDelKing" data-act="delKing" hidden>Удалить это королевство</button>
       <input type="file" id="importFile" accept="application/json,.json" hidden>
     </div>
     <div class="hint" id="buildStamp"></div>
@@ -77,7 +84,7 @@
     <button class="tab" data-tab="story">Персонаж</button>
   </nav>
 
-  <main>
+  <main id="cbody">
     <!-- ОСНОВНОЕ -->
     <section class="pane on" data-pane="main">
       <div class="bar">Класс брони и щит</div>
@@ -325,6 +332,114 @@
       </div>
     </section>
   </main>
+
+  <nav class="tabs" id="ktabs" hidden>
+    <button class="tab on" data-ktab="kmain">Королевство</button>
+    <button class="tab" data-ktab="kskills">Навыки</button>
+    <button class="tab" data-ktab="kleaders">Лидеры</button>
+    <button class="tab" data-ktab="ksett">Поселения</button>
+    <button class="tab" data-ktab="kfeats">Черты</button>
+    <button class="tab" data-ktab="kevents">События</button>
+    <button class="tab" data-ktab="karmy">Войска</button>
+  </nav>
+
+  <main id="kbody" hidden>
+    <!-- КОРОЛЕВСТВО -->
+    <section class="pane on" data-kpane="kmain">
+      <div class="bar">Название и основание</div>
+      <div class="panel grid-head">
+        <label class="f wide"><span class="lbl">Название королевства</span><input class="fld" data-kbind="name"></label>
+        <label class="f"><span class="lbl">Уровень</span><input class="fld num" inputmode="numeric" data-kbind="level"></label>
+        <label class="f"><span class="lbl">Очки опыта</span><input class="fld num" inputmode="numeric" data-kbind="xp"></label>
+        <label class="f"><span class="lbl">Хартия</span><input class="fld" data-kbind="charter"></label>
+        <label class="f"><span class="lbl">Центр королевства</span><input class="fld" data-kbind="heartland"></label>
+        <label class="f"><span class="lbl">Форма правления</span><input class="fld" data-kbind="gov"></label>
+        <label class="f"><span class="lbl">Столица</span><input class="fld" data-kbind="capital"></label>
+        <label class="f"><span class="lbl">Размер, гексов</span><input class="fld num" inputmode="numeric" data-kbind="size"></label>
+        <label class="f"><span class="lbl">Слава</span><input class="fld num" inputmode="numeric" data-kbind="fame.cur"></label>
+        <label class="f"><span class="lbl">Макс. славы</span><input class="fld num" inputmode="numeric" data-kbind="fame.max" placeholder="3"></label>
+        <label class="f"><span class="lbl">Бесславие</span><input class="fld num" inputmode="numeric" data-kbind="infamy"></label>
+      </div>
+
+      <div class="bar">Характеристики</div>
+      <div class="panel abil-grid" id="kAbilGrid"></div>
+
+      <div class="bar">СЛ контроля и состояние</div>
+      <div class="panel">
+        <div class="calcrow">
+          <div class="medal"><div class="medal-num" id="kCtrlDC">14</div><div class="medal-cap">СЛ контроля</div></div>
+          <div class="calcfields">
+            <label class="f"><span class="lbl">Базовая</span><input class="fld num" inputmode="numeric" data-kbind="dcBase" placeholder="авто"></label>
+            <label class="f"><span class="lbl">За размер</span><input class="fld num" inputmode="numeric" data-kbind="dcSize" placeholder="авто"></label>
+            <label class="f"><span class="lbl">Беспорядки</span><input class="fld num" inputmode="numeric" data-kbind="unrest"></label>
+            <div class="f"><span class="lbl">Штраф</span><div class="fld ro" id="kUnrestPen">0</div></div>
+            <label class="f"><span class="lbl">Потребление</span><input class="fld num" inputmode="numeric" data-kbind="consumption"></label>
+            <label class="f"><span class="lbl">Кости ресурсов</span><input class="fld" data-kbind="resDice" placeholder="авто"></label>
+            <label class="f"><span class="lbl">Торг. соглашения</span><input class="fld num" inputmode="numeric" data-kbind="trade"></label>
+            <label class="f"><span class="lbl">СЛ события</span><input class="fld num" inputmode="numeric" data-kbind="eventDC" placeholder="16"></label>
+            <div class="formula" id="kCtrlFormula"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bar">Раздор</div>
+      <div class="panel" id="kRuin"></div>
+
+      <div class="bar">Товары</div>
+      <div class="panel" id="kCommod"></div>
+
+      <div class="bar">Рабочие площадки</div>
+      <div class="panel" id="kWork"></div>
+    </section>
+
+    <!-- НАВЫКИ -->
+    <section class="pane" data-kpane="kskills">
+      <div class="bar">Навыки королевства</div>
+      <div class="panel">
+        <div class="kskills" id="kSkills"></div>
+        <div class="formula" id="kSkillNote"></div>
+      </div>
+    </section>
+
+    <!-- ЛИДЕРЫ -->
+    <section class="pane" data-kpane="kleaders">
+      <div class="bar">Лидеры</div>
+      <div class="panel" id="kLeaders"></div>
+    </section>
+
+    <!-- ПОСЕЛЕНИЯ -->
+    <section class="pane" data-kpane="ksett">
+      <div class="bar">Поселения</div>
+      <div class="panel">
+        <div class="settbar" id="kSettTabs"></div>
+      </div>
+      <div id="kSettBody"></div>
+    </section>
+
+    <!-- ЧЕРТЫ -->
+    <section class="pane" data-kpane="kfeats">
+      <div class="bar">Черты королевства</div>
+      <div class="panel items" id="kFeats"></div>
+      <div class="bar">Способности</div>
+      <div class="panel items" id="kAbils"></div>
+    </section>
+
+    <!-- СОБЫТИЯ -->
+    <section class="pane" data-kpane="kevents">
+      <div class="bar">События</div>
+      <div class="panel items" id="kEvents"></div>
+      <div class="bar">Отношения</div>
+      <div class="panel">
+        <textarea class="fld ta" data-kbind="relations" rows="6" placeholder="Соседи, союзники, враги, условия договоров…"></textarea>
+      </div>
+    </section>
+
+    <!-- ВОЙСКА -->
+    <section class="pane" data-kpane="karmy">
+      <div class="bar">Войска</div>
+      <div class="panel items" id="kArmies"></div>
+    </section>
+  </main>
   <footer class="foot">Значения сохраняются автоматически. Кнопка «Sync» → «Сохранить копию в файл» делает резервную копию.</footer>
 </div>
 
@@ -489,13 +604,152 @@
   .slot-in input{padding:6px 2px;min-height:38px;}
   .foot{margin-top:14px;font-size:11px;color:var(--muted);text-align:center;}
   @media (prefers-reduced-motion:reduce){#app *{transition:none!important;}}
+
+  /* ================= РЕЖИМ «КОРОЛЕВСТВО» ================= */
+  #app .brand{margin-right:10px;}
+  .modesw{display:flex;gap:3px;margin-right:auto;}
+  #app .modesw button{border:1px solid var(--line);background:var(--field);border-radius:3px;padding:0 11px;min-height:40px;
+    font:600 11px/1 Georgia,"Times New Roman",serif;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;}
+  #app .modesw button.on{background:var(--bar);color:var(--barText);border-color:var(--bar);}
+  #app .modesw button:active{transform:translateY(1px);}
+
+  /* в режиме королевства — зелень буклета */
+  #app.kmode{--bar:#1F3A1C;--barText:#E8EDD4;--accent:#5F7F32;}
+  #app.kmode.night{--bar:#0B140B;--barText:#C8D6A4;--accent:#8FB155;}
+
+  /* ---- характеристики королевства ---- */
+  .kabil-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;}
+
+  /* ---- раздор / товары / площадки ---- */
+  .krow{display:grid;grid-template-columns:140px repeat(3,minmax(0,1fr));gap:8px;align-items:end;}
+  .krow+.krow .lbl{display:none;}
+  .krow .rname{font:600 12px/1.2 Georgia,serif;background:var(--bar);color:var(--barText);border-radius:3px;
+    padding:11px 8px;text-align:center;letter-spacing:.06em;}
+  @media (max-width:520px){
+    .krow{grid-template-columns:repeat(3,minmax(0,1fr));}
+    .krow .rname{grid-column:1/-1;}
+    .krow+.krow .lbl{display:block;}
+  }
+  .kcomm{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:10px;}
+  .kcomm .cbox{border:1px solid var(--line);border-radius:3px;background:var(--field);padding:7px;}
+  .kcomm .cbox .lbl{text-align:center;}
+  .kcomm .cin{display:flex;gap:4px;}
+  .kcomm .cin input{padding:7px 2px;min-height:38px;}
+
+  /* ---- навыки королевства ---- */
+  .kskills{display:flex;flex-direction:column;gap:9px;}
+  .kskill{display:grid;grid-template-columns:minmax(120px,1.3fr) minmax(150px,auto) 58px;gap:8px;align-items:center;
+    border-bottom:1px dotted var(--line);padding-bottom:9px;}
+  .kskill-name{font-size:14px;display:flex;align-items:center;gap:6px;min-width:0;flex-wrap:wrap;}
+  .kskill-mods{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;}
+  .kskill-mods input{min-height:36px;padding:6px 2px;}
+  .kskill-mods .lbl{margin-bottom:3px;text-align:center;font-size:8.5px;}
+  @media (max-width:640px){
+    .kskill{grid-template-columns:1fr 54px;grid-template-areas:"n n" "s t";}
+    .kskill-name{grid-area:n;} .kskill .seg{grid-area:s;} .kskill .tot{grid-area:t;}
+  }
+
+  /* ---- лидеры ---- */
+  .kleads{display:flex;flex-direction:column;gap:10px;}
+  .klead{display:grid;grid-template-columns:150px minmax(0,1.2fr) minmax(0,1fr) 92px;gap:8px;align-items:end;}
+  .klead .rname{font:600 12px/1.2 Georgia,serif;background:var(--bar);color:var(--barText);border-radius:3px;
+    padding:11px 8px;text-align:center;letter-spacing:.06em;}
+  .klead+.klead .lbl{display:none;}
+  @media (max-width:620px){
+    .klead{grid-template-columns:minmax(0,1fr) 92px;}
+    .klead .rname{grid-column:1/-1;}
+    .klead+.klead .lbl{display:block;}
+  }
+  .chk{display:inline-flex;align-items:center;gap:6px;font-size:12px;min-height:42px;}
+  .chk input{width:20px;height:20px;}
+
+  /* ---- поселения ---- */
+  .settbar{display:flex;flex-wrap:wrap;gap:6px;}
+  #app .settbar button{flex:0 1 auto;min-height:42px;padding:0 12px;border:1px solid var(--line);border-radius:3px;
+    background:var(--field);font:600 12px/1 -apple-system,sans-serif;cursor:pointer;max-width:100%;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  #app .settbar button.on{background:var(--bar);color:var(--barText);border-color:var(--bar);}
+  #app .settbar button.add{background:transparent;border-style:dashed;color:var(--muted);}
+
+  .kbord{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;}
+  .kbord .bside{border:1px solid var(--line);border-radius:3px;background:var(--field);padding:8px;}
+  .kbord .bx{display:flex;flex-wrap:wrap;gap:4px 12px;}
+  .kbord .chk{min-height:32px;font-size:11.5px;}
+
+  /* ---- городской план ---- */
+  .ugtools{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+  .ugtools .lbl{margin:0;}
+  #app .ugbtn{background:var(--field);border:1px solid var(--line);border-radius:3px;min-height:38px;padding:0 10px;
+    font:600 12px/1 -apple-system,sans-serif;cursor:pointer;}
+  #app .ugbtn:active{transform:translateY(1px);}
+  #app .ugbtn.danger{border-color:var(--blood);color:var(--blood);}
+  #app .ugbtn.on{background:var(--bar);color:var(--barText);border-color:var(--bar);}
+
+  .ugrid{display:grid;gap:2px;background:var(--line);border:3px solid var(--bar);border-radius:3px;padding:2px;
+    position:relative;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;
+    width:100%;max-width:620px;margin:0 auto;}
+  #app .lot{background:var(--field);border:0;border-radius:2px;aspect-ratio:1/1;padding:0;margin:0;min-height:0;cursor:pointer;}
+  #app .lot:active{transform:none;}
+  #app .lot.hov{background:var(--accent);}
+  #app .lot.bad{background:var(--blood);}
+  .lot.bl,.bld.bl{margin-left:4px;}
+  .lot.bt,.bld.bt{margin-top:4px;}
+
+  #app .bld{border:1px solid rgba(0,0,0,.42);border-radius:2px;display:flex;flex-direction:column;align-items:center;
+    justify-content:center;gap:1px;padding:1px;overflow:hidden;cursor:grab;touch-action:none;min-height:0;
+    color:#1b1712;box-shadow:inset 0 0 0 1px rgba(255,255,255,.25);}
+  #app .bld:active{transform:none;}
+  .bld .bi{font-size:clamp(11px,3.2vw,18px);line-height:1;}
+  .bld .bn{font:600 7.5px/1.05 -apple-system,sans-serif;text-align:center;overflow:hidden;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word;}
+  #app .bld.pick{outline:3px solid var(--accent);outline-offset:-3px;}
+  .bld.ghost{position:fixed;left:0;top:0;transform:translate(-50%,-50%);pointer-events:none;z-index:9999;
+    opacity:.92;box-shadow:0 8px 22px rgba(0,0,0,.45);margin:0;}
+  .bld.ghost.bad{outline:3px solid var(--blood);outline-offset:-3px;}
+
+  /* цвета по назначению здания */
+  .c-res{background:#DCC9A4;} .c-com{background:#E8D08B;} .c-cra{background:#D9AB78;}
+  .c-mil{background:#BCC0C5;} .c-fai{background:#C9B7D7;} .c-kno{background:#A9C3D9;}
+  .c-cul{background:#B0CC96;} .c-civ{background:#DBA4A4;} .c-inf{background:#C6C2B6;}
+
+  /* ---- палитра зданий ---- */
+  .palfilter{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+  .palfilter .fld{flex:1 1 160px;min-width:0;}
+  .pal{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:6px;}
+  #app .pal button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:6px 3px;
+    border:1px solid rgba(0,0,0,.3);border-radius:3px;cursor:pointer;min-height:64px;color:#1b1712;touch-action:none;}
+  #app .pal button.on{outline:3px solid var(--bar);outline-offset:-3px;}
+  .pal .pi{font-size:17px;line-height:1;}
+  .pal .pn{font:600 9px/1.15 -apple-system,sans-serif;text-align:center;}
+  .pal .ps{font:600 8px/1 -apple-system,sans-serif;opacity:.65;}
+  .pal-h{grid-column:1/-1;font:600 10px/1 Georgia,serif;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--muted);border-bottom:1px solid var(--line);padding:9px 0 5px;}
+  .pal-empty{grid-column:1/-1;font-size:12px;color:var(--muted);font-style:italic;}
+
+  .ksel{display:flex;flex-wrap:wrap;gap:6px;align-items:center;background:var(--field);
+    border:1px dashed var(--accent);border-radius:3px;padding:8px;font-size:12.5px;}
+  .ksel .nm{font-weight:600;}
+  #kTrash{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:9998;background:var(--blood);
+    color:#fff;padding:13px 22px;border-radius:6px;font:600 13px/1 -apple-system,sans-serif;
+    box-shadow:0 8px 22px rgba(0,0,0,.45);pointer-events:none;}
+  #kTrash.hot{outline:3px solid #fff;outline-offset:-6px;}
+
+  /* ---- карточки списков (черты, события, войска) ---- */
+  .kcard{border:1px solid var(--line);border-radius:3px;background:var(--field);padding:10px;
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:9px;align-items:end;}
+  .kcard .wide{grid-column:1/-1;}
+  .kcard .fld{background:var(--panel);}
+  .kcard .khead{grid-column:1/-1;display:flex;align-items:center;gap:8px;}
+  .kcard .khead .n{font:600 12px/1 Georgia,serif;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);flex:1;}
+  .krowline{display:grid;grid-template-columns:90px minmax(0,1fr) 44px;gap:8px;align-items:end;}
+  .krowline+.krowline .lbl{display:none;}
 </style>
 
 <script>
 (function(){
   var app=document.getElementById('app');
   var KEY='pf2-sheet-v1';
-  var BUILD='2026-08-07 · 8';
+  var BUILD='2026-11-09 · 9 — режим королевства';
   var RANKS=[['Н',0],['И',2],['Э',4],['М',6],['Л',8]];
   var ABIL=[['str','СИЛ','Сила'],['dex','ЛВК','Ловкость'],['con','ВЫН','Выносливость'],['int','ИНТ','Интеллект'],['wis','МДР','Мудрость'],['cha','ХАР','Харизма']];
   var SKILLS=[['acro','Акробатика','dex',1],['athl','Атлетика','str',1],['thie','Воровство','dex',1],['surv','Выживание','wis',0],
@@ -522,7 +776,7 @@
   }
 
   var blob={v:1,active:null,chars:{}};
-  var saveTimer=null, hasStore=!!(window.storage&&window.storage.get), freshId=null;
+  var saveTimer=null, hasStore=!!(window.storage&&window.storage.get), freshId=null, freshKid=null;
 
   function uid(){return 'c'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
   function blank(){return {name:'Новый персонаж',level:1,abil:{str:10,dex:10,con:10,int:10,wis:10,cha:10},hp:{},ac:{},shield:{},saves:{},classdc:{key:'str'},skills:{},melee:[{},{},{}],ranged:[{},{},{}],wprof:{},spell:{key:'int'},slots:{},focus:{},coin:{},bio:{},itemsWorn:[],itemsReady:[],itemsOther:[]};}
@@ -563,6 +817,10 @@
     if(!blob.chars||!Object.keys(blob.chars).length){blob={v:1,active:null,chars:{}};var id=uid();blob.chars[id]=blank();blob.active=id;freshId=id;}
     if(!blob.chars[blob.active])blob.active=Object.keys(blob.chars)[0];
     Object.keys(blob.chars).forEach(function(id){migrate(blob.chars[id]);});
+    if(!blob.kingdoms||typeof blob.kingdoms!=='object')blob.kingdoms={};
+    if(!Object.keys(blob.kingdoms).length){var kid=kuid();blob.kingdoms[kid]=kblank();blob.kactive=kid;freshKid=kid;}
+    if(!blob.kingdoms[blob.kactive])blob.kactive=Object.keys(blob.kingdoms)[0];
+    Object.keys(blob.kingdoms).forEach(function(id){kmigrate(blob.kingdoms[id]);});
   }
 
   /* старое текстовое поле урона («1к8+4 рубящий») раскладываем по новым полям */
@@ -647,6 +905,22 @@
       blob.active=(remote.active&&blob.chars[remote.active])?remote.active:Object.keys(blob.chars)[0];
     }
     if(!blob.chars[blob.active])blob.active=(remote.active&&blob.chars[remote.active])?remote.active:Object.keys(blob.chars)[0];
+    if(remote.kingdoms&&typeof remote.kingdoms==='object'){
+      if(!blob.kingdoms)blob.kingdoms={};
+      var nk=0;
+      Object.keys(remote.kingdoms).forEach(function(id){
+        var rk=remote.kingdoms[id];
+        if(!rk||typeof rk!=='object')return;
+        if(!blob.kingdoms[id]||ts(rk)>ts(blob.kingdoms[id])){kmigrate(rk);blob.kingdoms[id]=rk;nk++;n++;}
+      });
+      /* только что созданный пустой бланк королевства уступает облачным */
+      if(nk&&freshKid&&blob.kingdoms[freshKid]&&!ts(blob.kingdoms[freshKid])&&Object.keys(blob.kingdoms).length>1){
+        delete blob.kingdoms[freshKid];freshKid=null;
+        blob.kactive=(remote.kactive&&blob.kingdoms[remote.kactive])?remote.kactive:Object.keys(blob.kingdoms)[0];
+      }
+      if(!blob.kactive||!blob.kingdoms[blob.kactive])
+        blob.kactive=(remote.kactive&&blob.kingdoms[remote.kactive])?remote.kactive:Object.keys(blob.kingdoms)[0];
+    }
     return n;
   }
   async function cloudPull(silent){
@@ -657,8 +931,8 @@
       var r=await cloudGet();cloudSha=r.sha;
       if(!r.data){if(!silent)status('В облаке пока пусто');return;}
       var n=cloudMerge(r.data);
-      if(n){renderCharList();fill();await save();}
-      status(n?('Из облака обновлено персонажей: '+n):'Облако — без изменений');
+      if(n){renderCharList();fill();kAfterMerge();await save();}
+      status(n?('Из облака обновлено записей: '+n):'Облако — без изменений');
     }catch(e){if(!(silent&&!cloud.token))status('Облако: '+e.message);}
     finally{cloudBusy=false;}
   }
@@ -669,7 +943,7 @@
     try{
       if(!silent)status('Отправляю в облако…');
       var r=await cloudGet();cloudSha=r.sha;
-      if(cloudMerge(r.data)){renderCharList();fill();}
+      if(cloudMerge(r.data)){renderCharList();fill();kAfterMerge();}
       var body={message:'Бланк PF2: обновление '+new Date().toISOString(),content:b64enc(JSON.stringify(blob,null,2)),branch:cloud.branch};
       if(cloudSha)body.sha=cloudSha;
       var pr=await fetch(cloudUrl(),{method:'PUT',headers:cloudHeaders({'Content-Type':'application/json'}),body:JSON.stringify(body)});
@@ -865,7 +1139,7 @@
   var UIKEY='pf2-ui-v1',ui={folds:{}};
   function uiRead(){
     if(!hasLocal)return;
-    try{var r=window.localStorage.getItem(UIKEY);if(r){var o=JSON.parse(r);if(o&&o.folds)ui.folds=o.folds;}}catch(e){}
+    try{var r=window.localStorage.getItem(UIKEY);if(r){var o=JSON.parse(r);if(o&&o.folds)ui.folds=o.folds;if(o&&o.mode)ui.mode=o.mode;}}catch(e){}
   }
   function uiWrite(){
     if(!hasLocal)return;
@@ -1097,7 +1371,8 @@
     else if(a==='export'){
       var blobFile=new Blob([JSON.stringify(blob,null,2)],{type:'application/json'});
       var url=URL.createObjectURL(blobFile);var link=document.createElement('a');
-      link.href=url;link.download='pf2-'+((get('name')||'персонаж')+'').replace(/\s+/g,'-')+'.json';
+      var dlName=(ui.mode==='kingdom')?(kget('name')||'королевство'):(get('name')||'персонаж');
+      link.href=url;link.download='pf2-'+(dlName+'').replace(/\s+/g,'-')+'.json';
       document.body.appendChild(link);link.click();document.body.removeChild(link);
       setTimeout(function(){URL.revokeObjectURL(url);},1000);status('Копия выгружена');
     }
@@ -1126,10 +1401,17 @@
     rd.onload=function(){
       try{
         var inc=JSON.parse(rd.result);
-        if(!inc.chars)throw 0;
-        Object.keys(inc.chars).forEach(function(id){migrate(inc.chars[id]);blob.chars[id]=inc.chars[id];});
-        blob.active=inc.active&&blob.chars[inc.active]?inc.active:Object.keys(blob.chars)[0];
-        renderCharList();fill();queueSave();status('Файл загружен');
+        if(!inc.chars&&!inc.kingdoms)throw 0;
+        if(inc.chars){
+          Object.keys(inc.chars).forEach(function(id){migrate(inc.chars[id]);blob.chars[id]=inc.chars[id];});
+          blob.active=inc.active&&blob.chars[inc.active]?inc.active:Object.keys(blob.chars)[0];
+        }
+        if(inc.kingdoms){
+          if(!blob.kingdoms)blob.kingdoms={};
+          Object.keys(inc.kingdoms).forEach(function(id){kmigrate(inc.kingdoms[id]);blob.kingdoms[id]=inc.kingdoms[id];});
+          blob.kactive=inc.kactive&&blob.kingdoms[inc.kactive]?inc.kactive:Object.keys(blob.kingdoms)[0];
+        }
+        renderCharList();fill();kAfterMerge();queueSave();status('Файл загружен');
       }catch(err){status('Не получилось прочитать файл — нужен JSON, выгруженный отсюда же');}
     };
     rd.readAsText(f);e.target.value='';
@@ -1143,9 +1425,892 @@
     set('hp.cur',cur);fill();
   }
 
+
+  /* ================================================================
+     РЕЖИМ «КОРОЛЕВСТВО» — Kingmaker, материалы для управления
+     ================================================================ */
+
+  var KABIL=[['cul','КУЛ','Культура'],['eco','ЭКО','Экономика'],['loy','ЛОЯ','Лояльность'],['sta','СТА','Стабильность']];
+  var KSKILLS=[['war','Военное дело','loy'],['wild','Дикие земли','sta'],['agri','Земледелие','sta'],
+    ['engi','Инженерное дело','sta'],['intr','Интрига','loy'],['arts','Искусства','cul'],
+    ['expl','Исследование','eco'],['boat','Лодочный транспорт','eco'],['magi','Магия','cul'],
+    ['defe','Оборона','sta'],['scho','Образование','cul'],['poli','Политика','loy'],
+    ['indu','Производство','eco'],['trad','Торговля','eco'],['folk','Традиции','cul'],['stat','Управление','loy']];
+  var KLEAD=[['ruler','Правитель'],['chanc','Канцлер'],['gener','Генерал'],['diplo','Дипломат'],
+    ['magis','Магистр'],['treas','Казначей'],['vicer','Наместник'],['warde','Хранитель']];
+  var KRUIN=[['cor','Коррупция'],['cri','Преступность'],['dec','Упадок'],['str','Распри']];
+  var KCOMM=[['food','Еда'],['lumb','Древесина'],['luxu','Предметы роскоши'],['ore','Руда'],['ston','Камень']];
+  var KWORK=[['farm','Угодья'],['camp','Лагеря лесорубов'],['mine','Шахты'],['quar','Каменоломни']];
+  var KSTYPE=[['village','Деревня'],['town','Посёлок'],['city','Город'],['metro','Мегаполис']];
+  var KEDGE=[['n','Северная граница'],['e','Восточная граница'],['s','Южная граница'],['w','Западная граница']];
+  var KBORD=[['water','Вода'],['bridge','Мост'],['wwall','Стена деревянная'],['swall','Стена каменная']];
+  var KINFRA=[['sewer','Канализация'],['lamps','Магические фонари'],['paved','Мощёные улицы']];
+  var KCATN={res:'Жильё',com:'Торговля',cra:'Ремесло',mil:'Военное',fai:'Вера',
+    kno:'Знание и магия',cul:'Культура',civ:'Власть',inf:'Прочее'};
+
+  /* здания городского плана: [id, название, участков, категория, значок] */
+  var KBLD=[
+    ['alchemist','Лаборатория алхимика',1,'cra','🧪'],['wizardtower','Башня мага',1,'kno','🪄'],
+    ['bank','Банк',1,'com','🏦'],['barracks','Казарма',1,'mil','🛡'],
+    ['brewery','Пивоварня',1,'cra','🍺'],['cemetery','Кладбище',1,'fai','⚰️'],
+    ['dump','Свалка',1,'inf','🗑'],['festivalhall','Фестивальный зал',1,'cul','🎉'],
+    ['shop','Лавка',1,'com','🛒'],['granary','Амбар',1,'com','🌾'],
+    ['herbalist','Дом травника',1,'kno','🌿'],['houses','Дома',1,'res','🏠'],
+    ['blackmarket','Чёрный рынок',1,'com','🕯'],['inn','Гостиница',1,'res','🛏'],
+    ['jail','Тюрьма',1,'mil','⛓'],['library','Библиотека',1,'kno','📚'],
+    ['luxurystore','Лавка роскоши',1,'com','💎'],['magicshop','Лавка магических предметов',1,'kno','✨'],
+    ['mansion','Особняк',1,'res','🏛'],['mill','Мельница',1,'cra','🌀'],
+    ['mint','Монетный двор',1,'cra','🪙'],['monument','Монумент',1,'cul','🗿'],
+    ['occultshop','Оккультная лавка',1,'kno','🔮'],['orphanage','Приют',1,'res','🕊'],
+    ['park','Парк',1,'cul','🌳'],['pier','Причал',1,'inf','⚓'],
+    ['rubble','Развалины',1,'inf','🪨'],['sacredgrove','Священная роща',1,'fai','🌲'],
+    ['shrine','Святилище',1,'fai','🕯'],['smithy','Кузница',1,'cra','🔨'],
+    ['workshops','Мастерские',1,'cra','⚒'],['stables','Конюшни',1,'inf','🐴'],
+    ['tannery','Дубильня',1,'cra','🧥'],['tavern1','Таверна, пивнушка',1,'cul','🍻'],
+    ['tavern2','Таверна, популярная',1,'cul','🍷'],['tenement','Трущобы',1,'res','🏚'],
+    ['thieves','Гильдия воров',1,'inf','🗝'],['generalstore','Торговая лавка',1,'com','🏪'],
+    ['watchtower','Сторожевая башня',1,'mil','🗼'],
+
+    ['academy','Академия',2,'kno','🎓'],['embassy','Посольство',2,'civ','🤝'],
+    ['foundry','Литейный цех',2,'cra','🏭'],['garrison','Гарнизон',2,'mil','⚔️'],
+    ['guildhall','Зал гильдии',2,'cul','🏵'],['infirmary','Лечебница',2,'kno','⚕️'],
+    ['keep','Крепость',2,'mil','🏯'],['sawmill','Лесопилка',2,'cra','🪵'],
+    ['marketplace','Рынок',2,'com','🧺'],['milacademy','Военная академия',2,'mil','🎖'],
+    ['museum','Музей',2,'cul','🖼'],['villa','Вилла',2,'res','🏡'],
+    ['opera','Оперный театр',2,'cul','🎭'],['warehouse','Надёжный склад',2,'com','🔐'],
+    ['stonemason','Дом каменщика',2,'cra','🧱'],['tavern3','Таверна, роскошная',2,'cul','🥂'],
+    ['tavern4','Таверна мирового уровня',2,'cul','🍾'],['temple','Храм',2,'fai','⛪'],
+    ['theater','Театр',2,'cul','🎪'],['townhall','Ратуша',2,'civ','⚜️'],
+
+    ['arena','Арена',4,'mil','🏟'],['castle','Замок',4,'mil','🏰'],
+    ['cathedral','Собор',4,'fai','✝️'],['construction','Строительная площадка',4,'cra','🚧'],
+    ['menagerie','Зверинец',4,'cul','🦁'],['palace','Дворец',4,'civ','👑'],
+    ['stockyard','Скотный двор',4,'cra','🐄'],['university','Университет',4,'kno','🏫'],
+    ['waterfront2','Порт (две границы)',4,'inf','⛵'],['waterfront1','Порт (одна граница)',4,'inf','🚢']
+  ];
+
+  /* базовая СЛ контроля по уровню королевства; 0-й элемент не используется */
+  var KDC=[14,14,15,16,18,20,22,23,24,26,27,28,30,31,32,34,35,36,38,39,40];
+  function ksizeMod(n){return n>=100?4:n>=50?3:n>=25?2:n>=10?1:0;}
+  function kresDie(n){return n>=100?12:n>=50?10:n>=25?8:n>=10?6:4;}
+  function kcommMax(n){return n>=100?20:n>=50?16:n>=25?12:n>=10?8:4;}
+  function kunrestPen(u){return u<=0?0:u>=15?4:u>=10?3:u>=5?2:1;}
+
+  /* ---------- данные ---------- */
+  function kuid(){return 'k'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+  function suid(){return 's'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+  function newSett(name){
+    return {id:suid(),name:name||'Новое поселение',level:'',type:'village',bw:3,bh:3,blds:[],
+      bord:{},infra:{},consumption:'',maxItem:'',influence:'',overcrowd:'',garrison:'',ongoing:''};
+  }
+  function kblank(){
+    var k={name:'Новое королевство',level:1,xp:'',charter:'',heartland:'',gov:'',capital:'',size:'',
+      abil:{cul:10,eco:10,loy:10,sta:10},unrest:'',consumption:'',trade:'',eventDC:'',resDice:'',
+      dcBase:'',dcSize:'',fame:{},infamy:'',ruin:{},commod:{},work:{},leaders:{},skills:{},
+      feats:[],abils:[],events:[],armies:[],relations:'',setts:[],activeSett:''};
+    KRUIN.forEach(function(r){k.ruin[r[0]]={v:'',p:'',t:'10'};});
+    KCOMM.forEach(function(c){k.commod[c[0]]={v:'',max:''};});
+    KWORK.forEach(function(w){k.work[w[0]]='';});
+    KLEAD.forEach(function(l){k.leaders[l[0]]={name:'',inv:'',note:''};});
+    KSKILLS.forEach(function(s){k.skills[s[0]]={rank:0};});
+    var s=newSett('Столица');k.setts.push(s);k.activeSett=s.id;
+    return k;
+  }
+  function kmigrate(k){
+    if(!k||typeof k!=='object')return;
+    if(!k.abil)k.abil={cul:10,eco:10,loy:10,sta:10};
+    if(!k.ruin)k.ruin={};
+    KRUIN.forEach(function(r){if(!k.ruin[r[0]])k.ruin[r[0]]={v:'',p:'',t:'10'};});
+    if(!k.commod)k.commod={};
+    KCOMM.forEach(function(c){if(!k.commod[c[0]])k.commod[c[0]]={v:'',max:''};});
+    if(!k.work)k.work={};
+    if(!k.leaders)k.leaders={};
+    KLEAD.forEach(function(l){if(!k.leaders[l[0]])k.leaders[l[0]]={name:'',inv:'',note:''};});
+    if(!k.skills)k.skills={};
+    KSKILLS.forEach(function(s){if(!k.skills[s[0]])k.skills[s[0]]={rank:0};});
+    ['feats','abils','events','armies'].forEach(function(key){if(!Array.isArray(k[key]))k[key]=[];});
+    if(!Array.isArray(k.setts)||!k.setts.length)k.setts=[newSett('Столица')];
+    k.setts.forEach(function(s){
+      if(!s.id)s.id=suid();
+      if(!Array.isArray(s.blds))s.blds=[];
+      s.bw=Math.max(1,Math.min(6,num(s.bw)||3));
+      s.bh=Math.max(1,Math.min(6,num(s.bh)||3));
+      if(!s.bord)s.bord={};
+      if(!s.infra)s.infra={};
+      /* выкидываем здания, вылезшие за уменьшённый план */
+      var W=s.bw*2,H=s.bh*2;
+      s.blds=s.blds.filter(function(p){
+        var d=bdim(p.b,p.r);
+        return bldDef(p.b)&&p.x>=0&&p.y>=0&&p.x+d.w<=W&&p.y+d.h<=H;
+      });
+    });
+    if(!k.activeSett||!k.setts.filter(function(s){return s.id===k.activeSett;}).length)k.activeSett=k.setts[0].id;
+  }
+
+  function K(){return (blob.kingdoms&&blob.kactive)?blob.kingdoms[blob.kactive]:null;}
+  function kget(p){var o=K();var ks=p.split('.');for(var i=0;i<ks.length;i++){if(o==null)return undefined;o=o[ks[i]];}return o;}
+  function kset(p,v){
+    var o=K();if(!o)return;
+    var ks=p.split('.');
+    for(var i=0;i<ks.length-1;i++){if(o[ks[i]]==null)o[ks[i]]={};o=o[ks[i]];}
+    o[ks[ks.length-1]]=v;kqueueSave();
+  }
+  function kqueueSave(){
+    var k=K();if(k)k._ts=Date.now();
+    clearTimeout(saveTimer);status('Сохраняю…');saveTimer=setTimeout(save,600);
+  }
+  function klvl(){var n=num(kget('level'));if(n<1)n=1;if(n>20)n=20;return n;}
+  function kprof(r){r=num(r);return r===0?0:RANKS[r][1]+klvl();}
+  function kmod(key){var s=kget('abil.'+key);return Math.floor(((s===''||s==null?10:num(s))-10)/2);}
+
+  /* ---------- геометрия городского плана ---------- */
+  function bldDef(id){for(var i=0;i<KBLD.length;i++)if(KBLD[i][0]===id)return KBLD[i];return null;}
+  function bdim(id,rot){
+    var b=bldDef(id);
+    if(!b)return {w:1,h:1};
+    if(b[2]===1)return {w:1,h:1};
+    if(b[2]===4)return {w:2,h:2};
+    return num(rot)?{w:1,h:2}:{w:2,h:1};
+  }
+  function occMap(s,skip){
+    var W=s.bw*2,H=s.bh*2,m=new Array(W*H),i,x,y,d,p;
+    for(i=0;i<s.blds.length;i++){
+      if(i===skip)continue;
+      p=s.blds[i];d=bdim(p.b,p.r);
+      for(y=0;y<d.h;y++)for(x=0;x<d.w;x++){
+        var cx=p.x+x,cy=p.y+y;
+        if(cx>=0&&cx<W&&cy>=0&&cy<H)m[cy*W+cx]=i+1;
+      }
+    }
+    return m;
+  }
+  function canPlace(s,x,y,w,h,skip){
+    var W=s.bw*2,H=s.bh*2;
+    if(x<0||y<0||x+w>W||y+h>H)return false;
+    var m=occMap(s,skip);
+    for(var j=0;j<h;j++)for(var i=0;i<w;i++)if(m[(y+j)*W+(x+i)])return false;
+    return true;
+  }
+  function settLots(s){var n=0;(s.blds||[]).forEach(function(p){var b=bldDef(p.b);if(b)n+=b[2];});return n;}
+  function settBlocks(s){
+    var used={};
+    (s.blds||[]).forEach(function(p){
+      var d=bdim(p.b,p.r);
+      for(var y=0;y<d.h;y++)for(var x=0;x<d.w;x++)used[Math.floor((p.y+y)/2)+'_'+Math.floor((p.x+x)/2)]=1;
+    });
+    return Object.keys(used).length;
+  }
+  function settTypeBy(n){return n<=1?'village':n<=4?'town':n<=9?'city':'metro';}
+  function typeName(id){for(var i=0;i<KSTYPE.length;i++)if(KSTYPE[i][0]===id)return KSTYPE[i][1];return '—';}
+
+  function setts(){var k=K();if(!k)return [];if(!Array.isArray(k.setts))k.setts=[];return k.setts;}
+  function settIdx(){
+    var a=setts(),id=kget('activeSett');
+    for(var i=0;i<a.length;i++)if(a[i].id===id)return i;
+    return a.length?0:-1;
+  }
+  function SS(){var i=settIdx();return i<0?null:setts()[i];}
+
+  /* ---------- заполнение полей ---------- */
+  function ksegHTML(path){
+    var h='';
+    for(var i=0;i<RANKS.length;i++)h+='<button type="button" data-ksegpath="'+path+'" data-v="'+i+'">'+RANKS[i][0]+'</button>';
+    return h;
+  }
+  function kFillBinds(root){
+    var n=root.querySelectorAll('[data-kbind]');
+    for(var i=0;i<n.length;i++){
+      var v=kget(n[i].dataset.kbind);
+      if(n[i].type==='checkbox'){n[i].checked=!!v&&v!=='0';continue;}
+      n[i].value=(v===undefined||v===null)?'':v;
+      if(n[i].tagName==='SELECT'&&n[i].selectedIndex<0)n[i].selectedIndex=0;
+      if(n[i].classList.contains('ta'))grow(n[i]);
+    }
+    var segs=root.querySelectorAll('[data-kseg]');
+    for(var j=0;j<segs.length;j++){
+      if(!segs[j].dataset.built){segs[j].innerHTML=ksegHTML(segs[j].dataset.kseg);segs[j].dataset.built='1';}
+      var val=num(kget(segs[j].dataset.kseg));
+      var bs=segs[j].querySelectorAll('button');
+      for(var m=0;m<bs.length;m++)bs[m].classList.toggle('on',m===val);
+    }
+    var ch=root.querySelectorAll('[data-kchoice]');
+    for(var c=0;c<ch.length;c++)ch[c].classList.toggle('on',kget(ch[c].dataset.kchoice)===ch[c].dataset.v);
+  }
+
+  /* ---------- отрисовка разделов ---------- */
+  function renderKAbil(){
+    document.getElementById('kAbilGrid').className='panel kabil-grid';
+    document.getElementById('kAbilGrid').innerHTML=KABIL.map(function(a){
+      return '<div class="abil"><div class="abil-mod" id="kmod-'+a[0]+'">+0</div><div class="abil-body">'+
+        '<span class="lbl">'+a[2]+'</span><input class="fld num" inputmode="numeric" data-kbind="abil.'+a[0]+'"></div></div>';
+    }).join('')+'<div class="formula" id="kAbilNote"></div>';
+  }
+  function renderKRuin(){
+    document.getElementById('kRuin').innerHTML=KRUIN.map(function(r){
+      var p='ruin.'+r[0];
+      return '<div class="krow"><div class="rname">'+r[1]+'</div>'+
+        '<label class="f"><span class="lbl">Значение</span><input class="fld num" inputmode="numeric" data-kbind="'+p+'.v"></label>'+
+        '<label class="f"><span class="lbl">Штраф</span><input class="fld num" inputmode="numeric" data-kbind="'+p+'.p"></label>'+
+        '<label class="f"><span class="lbl">Порог</span><input class="fld num" inputmode="numeric" placeholder="10" data-kbind="'+p+'.t"></label></div>';
+    }).join('')+'<div class="formula" id="kRuinNote"></div>';
+  }
+  function renderKCommod(){
+    document.getElementById('kCommod').innerHTML='<div class="kcomm">'+KCOMM.map(function(c){
+      var p='commod.'+c[0];
+      return '<div class="cbox"><span class="lbl">'+c[1]+'</span><div class="cin">'+
+        '<input class="fld num" inputmode="numeric" placeholder="есть" data-kbind="'+p+'.v">'+
+        '<input class="fld num" inputmode="numeric" placeholder="макс" data-kbind="'+p+'.max"></div></div>';
+    }).join('')+'</div><div class="formula" id="kCommNote"></div>';
+  }
+  function renderKWork(){
+    document.getElementById('kWork').innerHTML='<div class="kcomm">'+KWORK.map(function(w){
+      return '<div class="cbox"><span class="lbl">'+w[1]+'</span>'+
+        '<input class="fld num" inputmode="numeric" data-kbind="work.'+w[0]+'"></div>';
+    }).join('')+'</div>';
+  }
+  function renderKSkills(){
+    document.getElementById('kSkills').innerHTML=KSKILLS.map(function(s){
+      var ab=KABIL.filter(function(a){return a[0]===s[2];})[0];
+      var p='skills.'+s[0];
+      return '<div class="kskill"><div class="kskill-name"><span>'+s[1]+'</span><span class="ab">'+ab[1]+'</span></div>'+
+        '<div class="seg" data-kseg="'+p+'.rank"></div>'+
+        '<div class="tot" id="ktot-'+s[0]+'">+0</div>'+
+        '<div class="kskill-mods">'+
+          '<label class="f"><span class="lbl">Состоян.</span><input class="fld num" inputmode="numeric" data-kbind="'+p+'.status"></label>'+
+          '<label class="f"><span class="lbl">Ситуац.</span><input class="fld num" inputmode="numeric" data-kbind="'+p+'.circ"></label>'+
+          '<label class="f"><span class="lbl">Предмет</span><input class="fld num" inputmode="numeric" data-kbind="'+p+'.item"></label>'+
+          '<label class="f"><span class="lbl">Прочее</span><input class="fld num" inputmode="numeric" data-kbind="'+p+'.misc"></label>'+
+        '</div></div>';
+    }).join('');
+  }
+  function renderKLeaders(){
+    document.getElementById('kLeaders').innerHTML='<div class="kleads">'+KLEAD.map(function(l){
+      var p='leaders.'+l[0];
+      return '<div class="klead"><div class="rname">'+l[1]+'</div>'+
+        '<label class="f"><span class="lbl">Имя персонажа</span><input class="fld" data-kbind="'+p+'.name"></label>'+
+        '<label class="f"><span class="lbl">Примечание</span><input class="fld" data-kbind="'+p+'.note"></label>'+
+        '<label class="chk"><input type="checkbox" data-kbind="'+p+'.inv"> занято</label></div>';
+    }).join('')+'</div>';
+  }
+
+  /* ---------- списки: черты, способности, события, войска ---------- */
+  function karr(key){var k=K();if(!k)return [];if(!Array.isArray(k[key]))k[key]=[];return k[key];}
+  function kAddBtn(key,label){return '<button type="button" class="item-add" data-kadd="'+key+'">+ '+label+'</button>';}
+  function kDelBtn(key,i){return '<button type="button" class="item-del" data-kdel="'+key+'" data-i="'+i+'" title="Удалить" aria-label="Удалить строку">×</button>';}
+
+  function renderKFeats(){
+    var a=karr('feats');
+    var rows=a.map(function(it,i){
+      return '<div class="krowline">'+
+        '<label class="f"><span class="lbl">Уровень</span><input class="fld num" inputmode="numeric" data-kbind="feats.'+i+'.lvl"></label>'+
+        '<label class="f"><span class="lbl">Черта</span><input class="fld" data-kbind="feats.'+i+'.txt"></label>'+
+        kDelBtn('feats',i)+'</div>';
+    }).join('');
+    document.getElementById('kFeats').innerHTML=(rows||'<div class="item-empty">Черты королевства берутся на чётных уровнях — добавьте первую</div>')+kAddBtn('feats','Добавить черту');
+  }
+  function renderKAbils(){
+    var a=karr('abils');
+    var rows=a.map(function(it,i){
+      return '<div class="krowline">'+
+        '<label class="f"><span class="lbl">Уровень</span><input class="fld num" inputmode="numeric" data-kbind="abils.'+i+'.lvl"></label>'+
+        '<label class="f"><span class="lbl">Способность</span><input class="fld" data-kbind="abils.'+i+'.txt"></label>'+
+        kDelBtn('abils',i)+'</div>';
+    }).join('');
+    document.getElementById('kAbils').innerHTML=(rows||'<div class="item-empty">Пока пусто</div>')+kAddBtn('abils','Добавить способность');
+  }
+  function renderKEvents(){
+    var a=karr('events');
+    var rows=a.map(function(it,i){
+      var p='events.'+i;
+      return '<div class="kcard">'+
+        '<div class="khead"><span class="n">Событие '+(i+1)+'</span>'+kDelBtn('events',i)+'</div>'+
+        '<label class="f wide"><span class="lbl">Название события</span><input class="fld" data-kbind="'+p+'.name"></label>'+
+        '<label class="f"><span class="lbl">Уровень события</span><input class="fld num" inputmode="numeric" data-kbind="'+p+'.lvl"></label>'+
+        '<label class="f"><span class="lbl">Навык королевства</span><input class="fld" data-kbind="'+p+'.skill"></label>'+
+        '<label class="f"><span class="lbl">Модификатор</span><input class="fld num" inputmode="numeric" data-kbind="'+p+'.mod"></label>'+
+        '<label class="f wide"><span class="lbl">Примечания</span><textarea class="fld ta" rows="2" data-kbind="'+p+'.notes"></textarea></label>'+
+        '<label class="f wide"><span class="lbl">Исход</span><textarea class="fld ta" rows="2" data-kbind="'+p+'.out"></textarea></label>'+
+        '</div>';
+    }).join('');
+    document.getElementById('kEvents').innerHTML=(rows||'<div class="item-empty">Пока пусто — запишите первое событие</div>')+kAddBtn('events','Добавить событие');
+  }
+  var KARMYF=[
+    ['name','Название войска','w'],['lvl','Уровень','n'],['align','Мировоззрение',''],['kind','Род войск',''],
+    ['scout','Разведка',''],['scoutdc','СЛ разведки','n'],['ac','КБ','n'],['maneuver','Манёвр',''],
+    ['mandc','СЛ манёвра','n'],['recdc','СЛ рекрутирования','n'],['morale','Боевой дух',''],['moradc','СЛ боевого духа','n'],
+    ['hp','ПЗ','n'],['hpcur','Текущие ПЗ','n'],['rout','Порог бегства','n'],['melee','В ближнем бою',''],
+    ['ranged','Дистанционная',''],['scene','За сцену','n'],['potions','Зелья исцеления (макс 3)','n']
+  ];
+  function renderKArmies(){
+    var a=karr('armies');
+    var rows=a.map(function(it,i){
+      var p='armies.'+i;
+      var f=KARMYF.map(function(c){
+        return '<label class="f'+(c[2]==='w'?' wide':'')+'"><span class="lbl">'+c[1]+'</span>'+
+          '<input class="fld'+(c[2]==='n'?' num':'')+'"'+(c[2]==='n'?' inputmode="numeric"':'')+' data-kbind="'+p+'.'+c[0]+'"></label>';
+      }).join('');
+      return '<div class="kcard">'+
+        '<div class="khead"><span class="n">Войско '+(i+1)+'</span>'+kDelBtn('armies',i)+'</div>'+f+
+        '<label class="f wide"><span class="lbl">Тактики</span><textarea class="fld ta" rows="3" data-kbind="'+p+'.tactics"></textarea></label>'+
+        '<label class="f wide"><span class="lbl">Текущие состояния</span><textarea class="fld ta" rows="2" data-kbind="'+p+'.cond"></textarea></label>'+
+        '<label class="f wide"><span class="lbl">Тактические действия</span><textarea class="fld ta" rows="3" data-kbind="'+p+'.actions"></textarea></label>'+
+        '<label class="f wide"><span class="lbl">Снаряжение (броня, оружие)</span><textarea class="fld ta" rows="2" data-kbind="'+p+'.gear"></textarea></label>'+
+        '<label class="f wide"><span class="lbl">Способности</span><textarea class="fld ta" rows="3" data-kbind="'+p+'.abil"></textarea></label>'+
+        '</div>';
+    }).join('');
+    document.getElementById('kArmies').innerHTML=(rows||'<div class="item-empty">Пока пусто — наберите первое войско</div>')+kAddBtn('armies','Добавить войско');
+  }
+
+  /* ---------- поселения ---------- */
+  var ksel=null;   /* выбранное в палитре: {b:id, r:0} */
+  var kpick=-1;    /* выбранное на плане: индекс в s.blds */
+  var kpalQ='', kpalSize=0;
+
+  function renderSettTabs(){
+    var a=setts(),act=kget('activeSett');
+    document.getElementById('kSettTabs').innerHTML=a.map(function(s){
+      return '<button type="button" data-sett="'+s.id+'"'+(s.id===act?' class="on"':'')+'>'+
+        esc(s.name||'Без названия')+'</button>';
+    }).join('')+'<button type="button" class="add" data-settadd="1">+ Поселение</button>';
+  }
+
+  function gridInner(s){
+    var W=s.bw*2,H=s.bh*2,h='',x,y;
+    for(y=0;y<H;y++)for(x=0;x<W;x++){
+      h+='<button type="button" class="lot'+(x>0&&x%2===0?' bl':'')+(y>0&&y%2===0?' bt':'')+'" '+
+        'data-lot="'+x+','+y+'" aria-label="участок '+(x+1)+'×'+(y+1)+'" '+
+        'style="grid-column:'+(x+1)+';grid-row:'+(y+1)+'"></button>';
+    }
+    (s.blds||[]).forEach(function(p,i){
+      var b=bldDef(p.b);if(!b)return;
+      var d=bdim(p.b,p.r);
+      h+='<button type="button" class="bld c-'+b[3]+(p.x>0&&p.x%2===0?' bl':'')+(p.y>0&&p.y%2===0?' bt':'')+
+        (i===kpick?' pick':'')+'" data-bi="'+i+'" title="'+esc(b[1])+'" '+
+        'style="grid-column:'+(p.x+1)+'/span '+d.w+';grid-row:'+(p.y+1)+'/span '+d.h+'">'+
+        '<span class="bi">'+b[4]+'</span><span class="bn">'+esc(b[1])+'</span></button>';
+    });
+    return h;
+  }
+  function paletteInner(){
+    var q=kpalQ.trim().toLowerCase();
+    var groups=[[1,'Здания на 1 участок'],[2,'Здания на 2 участка'],[4,'Здания на 4 участка']];
+    var h='',any=false;
+    groups.forEach(function(g){
+      if(kpalSize&&kpalSize!==g[0])return;
+      var list=KBLD.filter(function(b){return b[2]===g[0]&&(!q||b[1].toLowerCase().indexOf(q)!==-1||KCATN[b[3]].toLowerCase().indexOf(q)!==-1);});
+      if(!list.length)return;
+      any=true;
+      h+='<div class="pal-h">'+g[1]+'</div>';
+      h+=list.map(function(b){
+        return '<button type="button" class="c-'+b[3]+(ksel&&ksel.b===b[0]?' on':'')+'" data-pal="'+b[0]+'" '+
+          'title="'+esc(b[1])+' — '+KCATN[b[3]]+', участков: '+b[2]+'">'+
+          '<span class="pi">'+b[4]+'</span><span class="pn">'+esc(b[1])+'</span>'+
+          '<span class="ps">'+b[2]+' уч.</span></button>';
+      }).join('');
+    });
+    if(!any)h='<div class="pal-empty">Ничего не нашлось</div>';
+    return h;
+  }
+  function selBarInner(){
+    if(ksel){
+      var b=bldDef(ksel.b),d=bdim(ksel.b,ksel.r);
+      return '<span>Выбрано: <span class="nm">'+esc(b[1])+'</span> ('+d.w+'×'+d.h+') — коснитесь участка на плане или перетащите</span>'+
+        (b[2]===2?'<button type="button" class="ugbtn" data-krot="sel">Повернуть</button>':'')+
+        '<button type="button" class="ugbtn" data-kcancel="1">Отмена</button>';
+    }
+    if(kpick>=0){
+      var s=SS(),p=s&&s.blds[kpick];
+      if(!p)return '';
+      var bb=bldDef(p.b);
+      return '<span>На плане: <span class="nm">'+esc(bb[1])+'</span> — коснитесь свободного участка, чтобы перенести</span>'+
+        (bb[2]===2?'<button type="button" class="ugbtn" data-krot="pick">Повернуть</button>':'')+
+        '<button type="button" class="ugbtn danger" data-kdelbld="1">Снести</button>'+
+        '<button type="button" class="ugbtn" data-kcancel="1">Отмена</button>';
+    }
+    return '<span>Перетащите здание из палитры на план — или коснитесь здания, а затем участка.</span>';
+  }
+  function settStatsText(s){
+    var W=s.bw*2,H=s.bh*2,lots=settLots(s),blocks=settBlocks(s);
+    return 'План: '+s.bw+'×'+s.bh+' кварталов ('+W+'×'+H+' = '+(W*H)+' участков)'+
+      '   ·   занято участков: '+lots+', свободно: '+(W*H-lots)+
+      '   ·   задействовано кварталов: '+blocks+
+      '   ·   по размеру это '+typeName(settTypeBy(blocks)).toLowerCase();
+  }
+
+  function renderSettBody(){
+    var box=document.getElementById('kSettBody');
+    var s=SS(),i=settIdx();
+    if(!s){box.innerHTML='';return;}
+    var p='setts.'+i;
+    var W=s.bw*2;
+    box.innerHTML=
+      '<div class="bar">Поселение</div>'+
+      '<div class="panel grid-head">'+
+        '<label class="f wide"><span class="lbl">Название</span><input class="fld" data-kbind="'+p+'.name"></label>'+
+        '<label class="f"><span class="lbl">Уровень</span><input class="fld num" inputmode="numeric" data-kbind="'+p+'.level"></label>'+
+        '<label class="f"><span class="lbl">Потребление</span><input class="fld num" inputmode="numeric" data-kbind="'+p+'.consumption"></label>'+
+        '<label class="f"><span class="lbl">Макс. бонус предмета</span><input class="fld num" inputmode="numeric" data-kbind="'+p+'.maxItem"></label>'+
+        '<label class="f"><span class="lbl">Зона влияния, гексов</span><input class="fld num" inputmode="numeric" data-kbind="'+p+'.influence"></label>'+
+        '<div class="segwrap wide"><span class="lbl">Тип поселения</span><div class="chips">'+
+          KSTYPE.map(function(t){return '<button type="button" data-kchoice="'+p+'.type" data-v="'+t[0]+'">'+t[1]+'</button>';}).join('')+
+        '</div></div>'+
+        '<div class="f"><span class="lbl">Состояние</span><label class="chk"><input type="checkbox" data-kbind="'+p+'.overcrowd"> перенаселено</label></div>'+
+        '<div class="f wide"><span class="lbl">Инфраструктура</span><div class="bx">'+
+          KINFRA.map(function(n){return '<label class="chk"><input type="checkbox" data-kbind="'+p+'.infra.'+n[0]+'"> '+n[1]+'</label>';}).join('')+
+        '</div></div>'+
+        '<div class="formula" id="kSettStats"></div>'+
+      '</div>'+
+
+      '<div class="bar">Городской план</div>'+
+      '<div class="panel">'+
+        '<div class="ugtools">'+
+          '<span class="lbl">Кварталов:</span>'+
+          '<button type="button" class="ugbtn" data-kgrid="w-">− по ширине</button>'+
+          '<button type="button" class="ugbtn" data-kgrid="w+">+ по ширине</button>'+
+          '<button type="button" class="ugbtn" data-kgrid="h-">− по высоте</button>'+
+          '<button type="button" class="ugbtn" data-kgrid="h+">+ по высоте</button>'+
+          '<button type="button" class="ugbtn danger" data-kclear="1">Очистить план</button>'+
+        '</div>'+
+        '<div class="ksel" id="kSelBar"></div>'+
+        '<div class="ugrid" id="kUGrid" style="grid-template-columns:repeat('+W+',minmax(0,1fr))"></div>'+
+      '</div>'+
+
+      '<div class="bar">Палитра зданий</div>'+
+      '<div class="panel">'+
+        '<div class="palfilter">'+
+          '<input class="fld" id="kPalQ" placeholder="Поиск здания…" autocomplete="off" value="'+esc(kpalQ)+'">'+
+          '<div class="chips">'+
+            '<button type="button" class="ugbtn'+(kpalSize===0?' on':'')+'" data-kpalsize="0">Все</button>'+
+            '<button type="button" class="ugbtn'+(kpalSize===1?' on':'')+'" data-kpalsize="1">1 уч.</button>'+
+            '<button type="button" class="ugbtn'+(kpalSize===2?' on':'')+'" data-kpalsize="2">2 уч.</button>'+
+            '<button type="button" class="ugbtn'+(kpalSize===4?' on':'')+'" data-kpalsize="4">4 уч.</button>'+
+          '</div>'+
+        '</div>'+
+        '<div class="pal" id="kPal"></div>'+
+      '</div>'+
+
+      '<div class="bar">Границы</div>'+
+      '<div class="panel"><div class="kbord">'+
+        KEDGE.map(function(e){
+          return '<div class="bside"><span class="lbl">'+e[1]+'</span><div class="bx">'+
+            KBORD.map(function(b){return '<label class="chk"><input type="checkbox" data-kbind="'+p+'.bord.'+e[0]+'.'+b[0]+'"> '+b[1]+'</label>';}).join('')+
+            '</div></div>';
+        }).join('')+
+      '</div></div>'+
+
+      '<div class="bar">Гарнизон и события</div>'+
+      '<div class="panel">'+
+        '<label class="f wide"><span class="lbl">Войска в гарнизоне</span><textarea class="fld ta" rows="3" data-kbind="'+p+'.garrison"></textarea></label>'+
+        '<label class="f wide"><span class="lbl">Длящиеся события</span><textarea class="fld ta" rows="3" data-kbind="'+p+'.ongoing"></textarea></label>'+
+        '<button type="button" class="item-add danger" data-settdel="1">Удалить это поселение</button>'+
+      '</div>';
+    renderGridArea();
+    kFillBinds(box);
+  }
+  function renderGridArea(){
+    var s=SS();if(!s)return;
+    var g=document.getElementById('kUGrid');if(!g)return;
+    g.style.gridTemplateColumns='repeat('+(s.bw*2)+',minmax(0,1fr))';
+    g.innerHTML=gridInner(s);
+    document.getElementById('kPal').innerHTML=paletteInner();
+    document.getElementById('kSelBar').innerHTML=selBarInner();
+    var st=document.getElementById('kSettStats');if(st)st.textContent=settStatsText(s);
+  }
+
+  /* ---------- перетаскивание ---------- */
+  var kdrag=null,ksup=false;
+  function cellPx(){
+    var l=document.querySelector('#kUGrid .lot');
+    return l?l.offsetWidth:48;
+  }
+  function ghostFor(id,rot){
+    var b=bldDef(id),d=bdim(id,rot),c=cellPx();
+    var g=document.createElement('div');
+    g.className='bld ghost c-'+b[3];
+    g.style.width=(c*d.w+(d.w-1)*2)+'px';
+    g.style.height=(c*d.h+(d.h-1)*2)+'px';
+    g.innerHTML='<span class="bi">'+b[4]+'</span><span class="bn">'+esc(b[1])+'</span>';
+    return g;
+  }
+  function clearHover(){
+    var n=document.querySelectorAll('#kUGrid .lot.hov,#kUGrid .lot.bad');
+    for(var i=0;i<n.length;i++)n[i].classList.remove('hov','bad');
+    var t=document.getElementById('kTrash');if(t)t.classList.remove('hot');
+  }
+  function markHover(s,x,y,w,h,ok){
+    var W=s.bw*2;
+    for(var j=0;j<h;j++)for(var i=0;i<w;i++){
+      var cx=x+i,cy=y+j;
+      if(cx<0||cy<0||cx>=W||cy>=s.bh*2)continue;
+      var el=document.querySelector('#kUGrid .lot[data-lot="'+cx+','+cy+'"]');
+      if(el)el.classList.add(ok?'hov':'bad');
+    }
+  }
+  function kDown(e){
+    if(e.pointerType==='mouse'&&e.button!==0)return;
+    var tgt=e.target.closest?e.target.closest('[data-pal],[data-bi]'):null;
+    if(!tgt)return;
+    var s=SS();if(!s)return;
+    var isPal=tgt.dataset.pal!==undefined;
+    var bid,idx,rot;
+    if(isPal){bid=tgt.dataset.pal;idx=-1;rot=(ksel&&ksel.b===bid)?ksel.r:0;}
+    else{idx=num(tgt.dataset.bi);var p=s.blds[idx];if(!p)return;bid=p.b;rot=num(p.r);}
+    kdrag={kind:isPal?'new':'move',b:bid,idx:idx,r:rot,x0:e.clientX,y0:e.clientY,
+      moved:false,ghost:null,tx:-1,ty:-1,ok:false,trash:false};
+    document.addEventListener('pointermove',kMove,{passive:false});
+    document.addEventListener('pointerup',kUp);
+    document.addEventListener('pointercancel',kCancel);
+  }
+  function kMove(e){
+    if(!kdrag)return;
+    if(!kdrag.moved){
+      if(Math.abs(e.clientX-kdrag.x0)<8&&Math.abs(e.clientY-kdrag.y0)<8)return;
+      kdrag.moved=true;
+      kdrag.ghost=ghostFor(kdrag.b,kdrag.r);
+      document.body.appendChild(kdrag.ghost);
+      if(kdrag.kind==='move'){
+        var t=document.getElementById('kTrash');
+        if(t)t.hidden=false;
+      }
+    }
+    if(e.cancelable)e.preventDefault();
+    kdrag.ghost.style.left=e.clientX+'px';
+    kdrag.ghost.style.top=e.clientY+'px';
+    kHover(e.clientX,e.clientY);
+  }
+  function kHover(x,y){
+    var s=SS();if(!s||!kdrag)return;
+    clearHover();
+    kdrag.trash=false;kdrag.tx=-1;kdrag.ok=false;
+    var el=document.elementFromPoint(x,y);
+    var tr=document.getElementById('kTrash');
+    if(tr&&!tr.hidden){
+      var r=tr.getBoundingClientRect();
+      if(x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom){
+        tr.classList.add('hot');kdrag.trash=true;kdrag.ghost.classList.remove('bad');return;
+      }
+    }
+    var lot=el&&el.closest?el.closest('[data-lot]'):null;
+    var bl=el&&el.closest?el.closest('[data-bi]'):null;
+    var cx,cy;
+    if(lot){var q=lot.dataset.lot.split(',');cx=num(q[0]);cy=num(q[1]);}
+    else if(bl){var b=s.blds[num(bl.dataset.bi)];if(!b)return;cx=b.x;cy=b.y;}
+    else{kdrag.ghost.classList.remove('bad');return;}
+    var d=bdim(kdrag.b,kdrag.r);
+    var ok=canPlace(s,cx,cy,d.w,d.h,kdrag.kind==='move'?kdrag.idx:-1);
+    kdrag.tx=cx;kdrag.ty=cy;kdrag.ok=ok;
+    kdrag.ghost.classList.toggle('bad',!ok);
+    markHover(s,cx,cy,d.w,d.h,ok);
+  }
+  function kStop(){
+    document.removeEventListener('pointermove',kMove,{passive:false});
+    document.removeEventListener('pointerup',kUp);
+    document.removeEventListener('pointercancel',kCancel);
+    if(kdrag&&kdrag.ghost&&kdrag.ghost.parentNode)kdrag.ghost.parentNode.removeChild(kdrag.ghost);
+    var t=document.getElementById('kTrash');if(t){t.hidden=true;t.classList.remove('hot');}
+    clearHover();
+  }
+  function kCancel(){kStop();kdrag=null;}
+  function kUp(e){
+    var d=kdrag;kStop();kdrag=null;
+    if(!d)return;
+    if(!d.moved)return;            /* это был тап — его обработает click */
+    /* после перетаскивания гасим click, который браузер пришлёт следом */
+    ksup=true;setTimeout(function(){ksup=false;},0);
+    var s=SS();if(!s)return;
+    if(d.trash&&d.kind==='move'){
+      s.blds.splice(d.idx,1);kpick=-1;kqueueSave();renderGridArea();status('Здание снесено');return;
+    }
+    if(d.tx<0||!d.ok){renderGridArea();if(d.tx>=0)status('Сюда не влезает — освободите участки или поверните здание');return;}
+    var dim=bdim(d.b,d.r);
+    if(d.kind==='new'){s.blds.push({b:d.b,x:d.tx,y:d.ty,r:d.r});ksel=null;}
+    else{s.blds[d.idx].x=d.tx;s.blds[d.idx].y=d.ty;s.blds[d.idx].r=d.r;kpick=-1;}
+    kqueueSave();renderGridArea();
+  }
+
+  /* ---------- события режима королевства ---------- */
+  function kPlaceAt(x,y){
+    var s=SS();if(!s)return;
+    if(ksel){
+      var d=bdim(ksel.b,ksel.r);
+      if(canPlace(s,x,y,d.w,d.h,-1)){s.blds.push({b:ksel.b,x:x,y:y,r:ksel.r});ksel=null;kqueueSave();renderGridArea();}
+      else status('Сюда не влезает — освободите участки или поверните здание');
+      return;
+    }
+    if(kpick>=0){
+      var p=s.blds[kpick];if(!p)return;
+      var dd=bdim(p.b,p.r);
+      if(canPlace(s,x,y,dd.w,dd.h,kpick)){p.x=x;p.y=y;kpick=-1;kqueueSave();renderGridArea();}
+      else status('Сюда не влезает');
+      return;
+    }
+  }
+
+  app.addEventListener('input',function(e){
+    var t=e.target;
+    if(t.id==='kPalQ'){kpalQ=t.value;document.getElementById('kPal').innerHTML=paletteInner();return;}
+    if(!t.dataset||t.dataset.kbind===undefined)return;
+    if(t.type==='checkbox')return;
+    kset(t.dataset.kbind,t.value);
+    if(t.classList.contains('ta'))grow(t);
+    krefresh();
+  });
+  app.addEventListener('change',function(e){
+    var t=e.target;
+    if(t.id==='kingSelect'){blob.kactive=t.value;ksel=null;kpick=-1;kfill();queueSave();return;}
+    if(t.dataset&&t.dataset.kbind!==undefined&&t.type==='checkbox'){kset(t.dataset.kbind,t.checked?'1':'');krefresh();}
+  });
+  app.addEventListener('click',function(e){
+    var t=e.target.closest('button');if(!t)return;
+
+    if(t.dataset.mode!==undefined){setMode(t.dataset.mode);return;}
+    if(t.dataset.act==='newKing'){
+      var id=kuid();if(!blob.kingdoms)blob.kingdoms={};
+      blob.kingdoms[id]=kblank();blob.kactive=id;ksel=null;kpick=-1;
+      renderKList();kfill();kqueueSave();return;
+    }
+    if(t.dataset.act==='delKing'){
+      var ids=Object.keys(blob.kingdoms||{});
+      if(ids.length<2){status('Это единственное королевство — удалить нельзя');return;}
+      if(!confirm('Удалить «'+(kget('name')||'Без названия')+'»? Отменить будет нельзя.'))return;
+      delete blob.kingdoms[blob.kactive];blob.kactive=Object.keys(blob.kingdoms)[0];
+      ksel=null;kpick=-1;renderKList();kfill();queueSave();return;
+    }
+    if(t.dataset.ktab){
+      var tabs=document.getElementById('ktabs').querySelectorAll('.tab');
+      for(var j=0;j<tabs.length;j++)tabs[j].classList.toggle('on',tabs[j]===t);
+      var panes=document.getElementById('kbody').querySelectorAll('.pane');
+      for(var m=0;m<panes.length;m++)panes[m].classList.toggle('on',panes[m].dataset.kpane===t.dataset.ktab);
+      window.scrollTo(0,0);return;
+    }
+    if(t.dataset.ksegpath!==undefined){
+      kset(t.dataset.ksegpath,num(t.dataset.v));
+      var sibs=t.parentNode.querySelectorAll('button');
+      for(var a=0;a<sibs.length;a++)sibs[a].classList.toggle('on',sibs[a]===t);
+      krefresh();return;
+    }
+    if(t.dataset.kchoice!==undefined){
+      var v=(kget(t.dataset.kchoice)===t.dataset.v)?'':t.dataset.v;
+      kset(t.dataset.kchoice,v);
+      var sib=t.parentNode.querySelectorAll('button');
+      for(var c=0;c<sib.length;c++)sib[c].classList.toggle('on',sib[c]===t&&v!=='');
+      krefresh();return;
+    }
+    if(t.dataset.kadd!==undefined){
+      karr(t.dataset.kadd).push({});kqueueSave();kRenderList(t.dataset.kadd,true);return;
+    }
+    if(t.dataset.kdel!==undefined){
+      var key=t.dataset.kdel,arr=karr(key),i=num(t.dataset.i);
+      if(!arr[i])return;
+      var nm=(arr[i].name||arr[i].txt||'').trim();
+      if(nm&&!confirm('Удалить «'+nm+'»?'))return;
+      arr.splice(i,1);kqueueSave();kRenderList(key,false);return;
+    }
+
+    /* ---- поселения ---- */
+    if(ksup)return;
+    if(t.dataset.sett!==undefined){kset('activeSett',t.dataset.sett);ksel=null;kpick=-1;renderSettTabs();renderSettBody();return;}
+    if(t.dataset.settadd!==undefined){
+      var s2=newSett('Поселение '+(setts().length+1));
+      setts().push(s2);kset('activeSett',s2.id);ksel=null;kpick=-1;renderSettTabs();renderSettBody();return;
+    }
+    if(t.dataset.settdel!==undefined){
+      var all=setts();
+      if(all.length<2){status('Это единственное поселение — удалить нельзя');return;}
+      var cur=SS();
+      if(!confirm('Удалить «'+(cur.name||'Без названия')+'» вместе с планом застройки?'))return;
+      all.splice(settIdx(),1);kset('activeSett',all[0].id);ksel=null;kpick=-1;
+      renderSettTabs();renderSettBody();return;
+    }
+    if(t.dataset.kgrid!==undefined){
+      var ss=SS();if(!ss)return;
+      var k2=t.dataset.kgrid;
+      if(k2==='w+'&&ss.bw<6)ss.bw++;
+      if(k2==='h+'&&ss.bh<6)ss.bh++;
+      if(k2==='w-'&&ss.bw>1){
+        if(bldsOutside(ss,ss.bw-1,ss.bh)&&!confirm('Здания за новой границей будут снесены. Продолжить?'))return;
+        ss.bw--;trimBlds(ss);
+      }
+      if(k2==='h-'&&ss.bh>1){
+        if(bldsOutside(ss,ss.bw,ss.bh-1)&&!confirm('Здания за новой границей будут снесены. Продолжить?'))return;
+        ss.bh--;trimBlds(ss);
+      }
+      kqueueSave();renderGridArea();return;
+    }
+    if(t.dataset.kclear!==undefined){
+      var s3=SS();if(!s3||!s3.blds.length)return;
+      if(!confirm('Снести всю застройку этого поселения?'))return;
+      s3.blds=[];kpick=-1;kqueueSave();renderGridArea();return;
+    }
+    if(t.dataset.kpalsize!==undefined){
+      kpalSize=num(t.dataset.kpalsize);
+      var fs=t.parentNode.querySelectorAll('[data-kpalsize]');
+      for(var f=0;f<fs.length;f++)fs[f].classList.toggle('on',fs[f]===t);
+      renderGridArea();return;
+    }
+    if(t.dataset.krot!==undefined){
+      if(t.dataset.krot==='sel'&&ksel){ksel.r=ksel.r?0:1;renderGridArea();return;}
+      if(t.dataset.krot==='pick'&&kpick>=0){
+        var s4=SS(),p4=s4.blds[kpick],nr=num(p4.r)?0:1,d4=bdim(p4.b,nr);
+        if(!canPlace(s4,p4.x,p4.y,d4.w,d4.h,kpick)){status('Повернуть некуда — рядом нет свободного участка');return;}
+        p4.r=nr;kqueueSave();renderGridArea();return;
+      }
+      return;
+    }
+    if(t.dataset.kcancel!==undefined){ksel=null;kpick=-1;renderGridArea();return;}
+    if(t.dataset.pal!==undefined){
+      ksel=(ksel&&ksel.b===t.dataset.pal)?null:{b:t.dataset.pal,r:0};kpick=-1;renderGridArea();return;
+    }
+    if(t.dataset.bi!==undefined){
+      var bi=num(t.dataset.bi);kpick=(kpick===bi)?-1:bi;ksel=null;renderGridArea();return;
+    }
+    if(t.dataset.lot!==undefined){
+      var q2=t.dataset.lot.split(',');kPlaceAt(num(q2[0]),num(q2[1]));return;
+    }
+  });
+  function bldsOutside(s,bw,bh){
+    var W=bw*2,H=bh*2;
+    return s.blds.some(function(p){var d=bdim(p.b,p.r);return p.x+d.w>W||p.y+d.h>H;});
+  }
+  function trimBlds(s){
+    var W=s.bw*2,H=s.bh*2;
+    s.blds=s.blds.filter(function(p){var d=bdim(p.b,p.r);return p.x+d.w<=W&&p.y+d.h<=H;});
+    kpick=-1;
+  }
+  function kRenderList(key,focusLast){
+    if(key==='feats')renderKFeats();
+    else if(key==='abils')renderKAbils();
+    else if(key==='events')renderKEvents();
+    else if(key==='armies')renderKArmies();
+    var box=document.getElementById(key==='feats'?'kFeats':key==='abils'?'kAbils':key==='events'?'kEvents':'kArmies');
+    kFillBinds(box);
+    if(focusLast){var ins=box.querySelectorAll('input.fld');if(ins.length)ins[Math.max(0,ins.length-1)].focus();}
+  }
+
+  /* ---------- пересчёт ---------- */
+  function krefresh(){
+    if(!K())return;
+    KABIL.forEach(function(a){
+      var el=document.getElementById('kmod-'+a[0]);if(el)el.textContent=sign(kmod(a[0]));
+    });
+    var size=num(kget('size')),lv=klvl();
+    var autoBase=KDC[Math.max(1,Math.min(20,lv))],autoSize=ksizeMod(size);
+    var bRaw=kget('dcBase'),sRaw=kget('dcSize');
+    var base=(bRaw===''||bRaw==null)?autoBase:num(bRaw);
+    var szm=(sRaw===''||sRaw==null)?autoSize:num(sRaw);
+    var up=kunrestPen(num(kget('unrest')));
+    document.getElementById('kCtrlDC').textContent=base+szm;
+    document.getElementById('kUnrestPen').textContent=up?('−'+up):'0';
+    document.getElementById('kCtrlFormula').textContent=
+      'СЛ контроля = базовая '+base+' (ур. '+lv+') + за размер '+szm+' = '+(base+szm)+
+      '   ·   кости ресурсов обычно '+(lv+4)+'к'+kresDie(size)+
+      '   ·   запас каждого товара обычно до '+kcommMax(size)+
+      (up?('   ·   беспорядки '+num(kget('unrest'))+' → штраф −'+up+' ко всем проверкам королевства'):'')+
+      (num(kget('unrest'))>=20?'   ·   20 и выше — королевство скатывается в анархию':'');
+
+    var an=document.getElementById('kAbilNote');
+    if(an)an.textContent='Модификатор = (значение − 10) / 2, вниз. Пустые поля считаются как 10.';
+
+    var rn=document.getElementById('kRuinNote');
+    if(rn){
+      var hit=KRUIN.filter(function(r){
+        var v=num(kget('ruin.'+r[0]+'.v')),th=num(kget('ruin.'+r[0]+'.t'))||10;
+        return v>=th;
+      }).map(function(r){return r[1].toLowerCase();});
+      rn.textContent=hit.length
+        ? ('Порог достигнут: '+hit.join(', ')+' — увеличьте штраф на 1, порог на 10 и обнулите значение')
+        : 'Когда значение достигает порога, штраф растёт на 1, порог — на 10, значение обнуляется.';
+    }
+    var cn=document.getElementById('kCommNote');
+    if(cn)cn.textContent='Обычный предел хранения при размере '+size+' гексов — '+kcommMax(size)+' каждого товара; поле «макс» перебивает это значение.';
+
+    KSKILLS.forEach(function(s){
+      var p='skills.'+s[0];
+      var t=kmod(s[2])+kprof(kget(p+'.rank'))+num(kget(p+'.status'))+num(kget(p+'.circ'))+
+        num(kget(p+'.item'))+num(kget(p+'.misc'))-up;
+      var el=document.getElementById('ktot-'+s[0]);if(el)el.textContent=sign(t);
+    });
+    var sn=document.getElementById('kSkillNote');
+    if(sn)sn.textContent='Итог = характеристика + умение (ранг + уровень королевства '+lv+') + состояние + ситуация + предмет + прочее'+
+      (up?(' − штраф за беспорядки '+up+' (уже вычтен)'):'');
+
+    /* поселения: подписи вкладок и сводка */
+    var a=setts(),chips=document.getElementById('kSettTabs').querySelectorAll('[data-sett]');
+    for(var i=0;i<chips.length;i++){
+      for(var j=0;j<a.length;j++)if(a[j].id===chips[i].dataset.sett){
+        var nm=a[j].name||'Без названия';
+        if(chips[i].textContent!==nm)chips[i].textContent=nm;
+      }
+    }
+    var cur=SS(),st=document.getElementById('kSettStats');
+    if(cur&&st)st.textContent=settStatsText(cur);
+
+    var sel=document.getElementById('kingSelect');
+    var opt=sel.options[sel.selectedIndex];
+    if(opt&&opt.textContent!==(kget('name')||'Без названия'))renderKList();
+  }
+
+  function renderKList(){
+    var sel=document.getElementById('kingSelect');
+    sel.innerHTML=Object.keys(blob.kingdoms||{}).map(function(id){
+      return '<option value="'+id+'"'+(id===blob.kactive?' selected':'')+'>'+
+        ((blob.kingdoms[id].name||'Без названия')+'').replace(/</g,'&lt;')+'</option>';
+    }).join('');
+  }
+  /* после слияния с облаком или загрузки файла */
+  function kAfterMerge(){
+    if(!document.getElementById('kingSelect'))return;
+    ksel=null;kpick=-1;
+    renderKList();
+    if(ui.mode==='kingdom')kfill();
+  }
+  function kfill(){
+    var kb=document.getElementById('kbody');
+    if(!K())return;
+    renderKRuin();renderKCommod();renderKWork();renderKSkills();renderKLeaders();
+    renderKFeats();renderKAbils();renderKEvents();renderKArmies();
+    renderSettTabs();renderSettBody();
+    kFillBinds(kb);
+    krefresh();
+  }
+
+  /* ---------- переключение режима ---------- */
+  function setMode(m){
+    var king=(m==='kingdom');
+    ui.mode=king?'kingdom':'char';uiWrite();
+    app.classList.toggle('kmode',king);
+    document.getElementById('tabs').hidden=king;
+    document.querySelector('main').hidden=king;
+    document.getElementById('ktabs').hidden=!king;
+    document.getElementById('kbody').hidden=!king;
+    document.getElementById('charSelect').hidden=king;
+    document.getElementById('btnNewChar').hidden=king;
+    document.getElementById('kingSelect').hidden=!king;
+    document.getElementById('btnNewKing').hidden=!king;
+    document.getElementById('btnDelChar').hidden=king;
+    document.getElementById('btnDelKing').hidden=!king;
+    document.getElementById('brandName').textContent=king?'Бланк королевства':'Бланк персонажа';
+    var ms=document.getElementById('modeSw').querySelectorAll('button');
+    for(var i=0;i<ms.length;i++)ms[i].classList.toggle('on',ms[i].dataset.mode===(king?'kingdom':'char'));
+    if(king)kfill();
+    window.scrollTo(0,0);
+  }
+
+  function kingdomInit(){
+    var t=document.createElement('div');
+    t.id='kTrash';t.hidden=true;t.textContent='Перетащите сюда, чтобы снести';
+    document.body.appendChild(t);
+    document.getElementById('kSettBody').addEventListener('pointerdown',kDown);
+    document.getElementById('kSettBody').addEventListener('dragstart',function(e){e.preventDefault();});
+    renderKAbil();
+    renderKList();
+    setMode(ui.mode==='kingdom'?'kingdom':'char');
+  }
+
   cloudReadCfg();
   load().then(function(){
     renderCharList();fill();
+    kingdomInit();
     status((hasStore||hasLocal)?'Готово. Значения сохраняются автоматически':'Хранилище недоступно — работайте и выгружайте копию в файл');
     cloudPull(true);
   });
