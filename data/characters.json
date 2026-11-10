@@ -624,5 +624,208 @@
       "itemsOther": [],
       "_ts": 1790107706581
     }
-  }
+  },
+  "kingdoms": {
+    "kmwawjbnq4yxm": {
+      "name": "Новое королевство",
+      "level": 1,
+      "xp": "",
+      "charter": "",
+      "heartland": "",
+      "gov": "",
+      "capital": "",
+      "size": "",
+      "abil": {
+        "cul": 10,
+        "eco": 10,
+        "loy": 10,
+        "sta": 10
+      },
+      "unrest": "",
+      "consumption": "",
+      "trade": "",
+      "eventDC": "",
+      "resDice": "",
+      "dcBase": "",
+      "dcSize": "",
+      "fame": {},
+      "infamy": "",
+      "ruin": {
+        "cor": {
+          "v": "",
+          "p": "",
+          "t": "10"
+        },
+        "cri": {
+          "v": "",
+          "p": "",
+          "t": "10"
+        },
+        "dec": {
+          "v": "",
+          "p": "",
+          "t": "10"
+        },
+        "str": {
+          "v": "",
+          "p": "",
+          "t": "10"
+        }
+      },
+      "commod": {
+        "food": {
+          "v": "",
+          "max": ""
+        },
+        "lumb": {
+          "v": "",
+          "max": ""
+        },
+        "luxu": {
+          "v": "",
+          "max": ""
+        },
+        "ore": {
+          "v": "",
+          "max": ""
+        },
+        "ston": {
+          "v": "",
+          "max": ""
+        }
+      },
+      "work": {
+        "farm": "",
+        "camp": "",
+        "mine": "",
+        "quar": ""
+      },
+      "leaders": {
+        "ruler": {
+          "name": "",
+          "inv": "",
+          "note": ""
+        },
+        "chanc": {
+          "name": "",
+          "inv": "",
+          "note": ""
+        },
+        "gener": {
+          "name": "",
+          "inv": "",
+          "note": ""
+        },
+        "diplo": {
+          "name": "",
+          "inv": "",
+          "note": ""
+        },
+        "magis": {
+          "name": "",
+          "inv": "",
+          "note": ""
+        },
+        "treas": {
+          "name": "",
+          "inv": "",
+          "note": ""
+        },
+        "vicer": {
+          "name": "",
+          "inv": "",
+          "note": ""
+        },
+        "warde": {
+          "name": "",
+          "inv": "",
+          "note": ""
+        }
+      },
+      "skills": {
+        "war": {
+          "rank": 0
+        },
+        "wild": {
+          "rank": 0
+        },
+        "agri": {
+          "rank": 0
+        },
+        "engi": {
+          "rank": 0
+        },
+        "intr": {
+          "rank": 0
+        },
+        "arts": {
+          "rank": 0
+        },
+        "expl": {
+          "rank": 0
+        },
+        "boat": {
+          "rank": 0
+        },
+        "magi": {
+          "rank": 0
+        },
+        "defe": {
+          "rank": 0
+        },
+        "scho": {
+          "rank": 0
+        },
+        "poli": {
+          "rank": 0
+        },
+        "indu": {
+          "rank": 0
+        },
+        "trad": {
+          "rank": 0
+        },
+        "folk": {
+          "rank": 0
+        },
+        "stat": {
+          "rank": 0
+        }
+      },
+      "feats": [],
+      "abils": [],
+      "events": [],
+      "armies": [],
+      "relations": "",
+      "setts": [
+        {
+          "id": "smwawjbnqxcda",
+          "name": "Столица",
+          "level": "",
+          "type": "village",
+          "bw": 3,
+          "bh": 3,
+          "blds": [
+            {
+              "b": "wizardtower",
+              "x": 1,
+              "y": 4,
+              "r": 0
+            }
+          ],
+          "bord": {},
+          "infra": {},
+          "consumption": "",
+          "maxItem": "",
+          "influence": "",
+          "overcrowd": "",
+          "garrison": "",
+          "ongoing": ""
+        }
+      ],
+      "activeSett": "smwawjbnqxcda",
+      "_ts": 1794327970084
+    }
+  },
+  "kactive": "kmwawjbnq4yxm"
 }
