@@ -759,7 +759,7 @@
 (function(){
   var app=document.getElementById('app');
   var KEY='pf2-sheet-v1';
-  var BUILD='2026-11-10 · 10 — карты зданий';
+  var BUILD='2026-11-10 · 11 — кнопка «Снести», разделение бланков';
   var RANKS=[['Н',0],['И',2],['Э',4],['М',6],['Л',8]];
   var ABIL=[['str','СИЛ','Сила'],['dex','ЛВК','Ловкость'],['con','ВЫН','Выносливость'],['int','ИНТ','Интеллект'],['wis','МДР','Мудрость'],['cha','ХАР','Харизма']];
   var SKILLS=[['acro','Акробатика','dex',1],['athl','Атлетика','str',1],['thie','Воровство','dex',1],['surv','Выживание','wis',0],
@@ -987,9 +987,12 @@
   }
 
   /* ---------- построение ---------- */
+  /* бланк персонажа и бланк королевства живут в одном #app и используют одни и те же
+     классы (.seg, .chips, .tab, .pane), поэтому выборки персонажа ограничены его разметкой */
+  function cq(sel){var r=document.getElementById('cbody');return r?r.querySelectorAll(sel):[];}
   function segHTML(path){var h='';for(var i=0;i<RANKS.length;i++){h+='<button type="button" data-seg-path="'+path+'" data-v="'+i+'">'+RANKS[i][0]+'</button>';}return h;}
   function buildSegs(){
-    var nodes=app.querySelectorAll('.seg');
+    var nodes=cq('.seg');
     for(var i=0;i<nodes.length;i++){if(!nodes[i].dataset.built){nodes[i].innerHTML=segHTML(nodes[i].dataset.seg);nodes[i].dataset.built='1';}}
   }
 
@@ -1186,7 +1189,7 @@
       itemCount(key);applyFold(key);
     });
     fillBinds(app);
-    var segs=app.querySelectorAll('.seg');
+    var segs=cq('.seg');
     for(var j=0;j<segs.length;j++){
       var val=num(get(segs[j].dataset.seg));
       var bs=segs[j].querySelectorAll('button');
@@ -1196,7 +1199,7 @@
     refresh();
   }
   function fillChips(){
-    var ch=app.querySelectorAll('.chips button');
+    var ch=cq('.chips button');
     for(var i=0;i<ch.length;i++){
       var cur=get(ch[i].dataset.choicePath);
       ch[i].classList.toggle('on',cur===ch[i].dataset.v);
@@ -1301,7 +1304,7 @@
     document.getElementById('hpLabel').textContent=cur+' / '+max+(tmp>0?'  (+'+tmp+' врем.)':'');
 
     var hero=num(get('hero'));
-    var pips=app.querySelectorAll('.pip');
+    var pips=cq('.pip');
     for(var p=0;p<pips.length;p++)pips[p].classList.toggle('on',p<hero);
 
     var sel=document.getElementById('charSelect');
@@ -1363,8 +1366,8 @@
     }
     if(t.dataset.hp!==undefined){applyHP(num(t.dataset.hp));return;}
     if(t.dataset.tab){
-      var tabs=app.querySelectorAll('.tab');for(var j=0;j<tabs.length;j++)tabs[j].classList.toggle('on',tabs[j]===t);
-      var panes=app.querySelectorAll('.pane');for(var k=0;k<panes.length;k++)panes[k].classList.toggle('on',panes[k].dataset.pane===t.dataset.tab);
+      var tabs=document.getElementById('tabs').querySelectorAll('.tab');for(var j=0;j<tabs.length;j++)tabs[j].classList.toggle('on',tabs[j]===t);
+      var panes=cq('.pane');for(var k=0;k<panes.length;k++)panes[k].classList.toggle('on',panes[k].dataset.pane===t.dataset.tab);
       window.scrollTo(0,0);return;
     }
     var a=t.dataset.act;
@@ -2192,6 +2195,14 @@
         p4.r=nr;kqueueSave();renderGridArea();return;
       }
       return;
+    }
+    if(t.dataset.kdelbld!==undefined){
+      var s5=SS();if(!s5)return;
+      var p5=(kpick>=0)?s5.blds[kpick]:null;
+      if(!p5){kpick=-1;renderGridArea();status('Сначала коснитесь здания на плане');return;}
+      var bd5=bldDef(p5.b);
+      s5.blds.splice(kpick,1);kpick=-1;kqueueSave();renderGridArea();
+      status((bd5?bd5[1]:'Здание')+' снесено');return;
     }
     if(t.dataset.kcancel!==undefined){ksel=null;kpick=-1;renderGridArea();return;}
     if(t.dataset.pal!==undefined){
