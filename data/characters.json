@@ -811,6 +811,12 @@
               "x": 1,
               "y": 4,
               "r": 0
+            },
+            {
+              "b": "wizardtower",
+              "x": 3,
+              "y": 4,
+              "r": 0
             }
           ],
           "bord": {},
@@ -824,7 +830,7 @@
         }
       ],
       "activeSett": "smwawjbnqxcda",
-      "_ts": 1794327970084
+      "_ts": 1794472352169
     }
   },
   "kactive": "kmwawjbnq4yxm"
