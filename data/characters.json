@@ -648,7 +648,9 @@
       "resDice": "5д4",
       "dcBase": "1",
       "dcSize": "",
-      "fame": {},
+      "fame": {
+        "cur": "1"
+      },
       "infamy": "",
       "ruin": {
         "cor": {
@@ -840,7 +842,7 @@
         }
       ],
       "activeSett": "smwawjbnqxcda",
-      "_ts": 1794675577937
+      "_ts": 1794675654848
     }
   },
   "kactive": "kmwawjbnq4yxm"
