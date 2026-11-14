@@ -627,7 +627,7 @@
   },
   "kingdoms": {
     "kmwawjbnq4yxm": {
-      "name": "Новое королевство",
+      "name": "Изенгард",
       "level": 1,
       "xp": "",
       "charter": "",
@@ -817,7 +817,7 @@
         }
       ],
       "activeSett": "smwawjbnqxcda",
-      "_ts": 1794671771997
+      "_ts": 1794673075211
     }
   },
   "kactive": "kmwawjbnq4yxm"
