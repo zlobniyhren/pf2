@@ -703,7 +703,7 @@
       "leaders": {
         "ruler": {
           "name": "Мелисандра",
-          "inv": "",
+          "inv": "1",
           "note": ""
         },
         "chanc": {
@@ -822,7 +822,7 @@
         }
       ],
       "activeSett": "smwawjbnqxcda",
-      "_ts": 1794674700085
+      "_ts": 1794674722020
     }
   },
   "kactive": "kmwawjbnq4yxm"
