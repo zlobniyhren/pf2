@@ -629,7 +629,7 @@
     "kmwawjbnq4yxm": {
       "name": "Изенгард",
       "level": 1,
-      "xp": "40",
+      "xp": "44",
       "charter": "Субсидия",
       "heartland": "Руины",
       "gov": "Республика",
@@ -854,7 +854,7 @@
         }
       ],
       "activeSett": "smwawjbnqxcda",
-      "_ts": 1794681605619
+      "_ts": 1794685233477
     }
   },
   "kactive": "kmwawjbnq4yxm"
