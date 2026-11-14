@@ -642,7 +642,7 @@
         "sta": "16"
       },
       "unrest": "",
-      "consumption": "",
+      "consumption": "0",
       "trade": "",
       "eventDC": "14",
       "resDice": "5д4",
@@ -822,7 +822,7 @@
         }
       ],
       "activeSett": "smwawjbnqxcda",
-      "_ts": 1794674287332
+      "_ts": 1794674294208
     }
   },
   "kactive": "kmwawjbnq4yxm"
