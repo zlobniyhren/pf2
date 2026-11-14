@@ -810,7 +810,14 @@
           "type": "village",
           "bw": 3,
           "bh": 3,
-          "blds": [],
+          "blds": [
+            {
+              "b": "townhall",
+              "x": 0,
+              "y": 0,
+              "r": 0
+            }
+          ],
           "bord": {},
           "infra": {},
           "consumption": "",
@@ -822,7 +829,7 @@
         }
       ],
       "activeSett": "smwawjbnqxcda",
-      "_ts": 1794674852071
+      "_ts": 1794674886442
     }
   },
   "kactive": "kmwawjbnq4yxm"
