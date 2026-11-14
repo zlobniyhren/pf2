@@ -805,7 +805,7 @@
       "setts": [
         {
           "id": "smwawjbnqxcda",
-          "name": "Столица",
+          "name": "Новорогачево",
           "level": "",
           "type": "village",
           "bw": 3,
@@ -822,7 +822,7 @@
         }
       ],
       "activeSett": "smwawjbnqxcda",
-      "_ts": 1794674788157
+      "_ts": 1794674852071
     }
   },
   "kactive": "kmwawjbnq4yxm"
