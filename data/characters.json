@@ -649,7 +649,7 @@
       "dcBase": "",
       "dcSize": "0",
       "fame": {
-        "cur": "1"
+        "cur": "0"
       },
       "infamy": "",
       "ruin": {
@@ -854,7 +854,7 @@
         }
       ],
       "activeSett": "smwawjbnqxcda",
-      "_ts": 1794685762446
+      "_ts": 1794685860391
     }
   },
   "kactive": "kmwawjbnq4yxm"
