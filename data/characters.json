@@ -631,7 +631,7 @@
       "level": 1,
       "xp": "",
       "charter": "Субсидия",
-      "heartland": "",
+      "heartland": "Руины",
       "gov": "",
       "capital": "",
       "size": "",
@@ -817,7 +817,7 @@
         }
       ],
       "activeSett": "smwawjbnqxcda",
-      "_ts": 1794673165768
+      "_ts": 1794673466673
     }
   },
   "kactive": "kmwawjbnq4yxm"
