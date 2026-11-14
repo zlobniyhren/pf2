@@ -780,19 +780,24 @@
           "status": "1"
         },
         "scho": {
-          "rank": 0
+          "rank": 0,
+          "status": "1"
         },
         "poli": {
-          "rank": 1
+          "rank": 1,
+          "status": "1"
         },
         "indu": {
-          "rank": 0
+          "rank": 0,
+          "status": "1"
         },
         "trad": {
-          "rank": 0
+          "rank": 0,
+          "status": "1"
         },
         "folk": {
-          "rank": 0
+          "rank": 0,
+          "status": "1"
         },
         "stat": {
           "rank": 0
@@ -835,7 +840,7 @@
         }
       ],
       "activeSett": "smwawjbnqxcda",
-      "_ts": 1794675561524
+      "_ts": 1794675577937
     }
   },
   "kactive": "kmwawjbnq4yxm"
