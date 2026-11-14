@@ -680,7 +680,7 @@
           "max": "4"
         },
         "lumb": {
-          "v": "1",
+          "v": "2",
           "max": "4"
         },
         "luxu": {
@@ -842,7 +842,7 @@
         }
       ],
       "activeSett": "smwawjbnqxcda",
-      "_ts": 1794677204364
+      "_ts": 1794677654382
     }
   },
   "kactive": "kmwawjbnq4yxm"
