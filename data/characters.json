@@ -645,7 +645,7 @@
       "consumption": "",
       "trade": "",
       "eventDC": "",
-      "resDice": "",
+      "resDice": "5д4",
       "dcBase": "",
       "dcSize": "",
       "fame": {},
@@ -822,7 +822,7 @@
         }
       ],
       "activeSett": "smwawjbnqxcda",
-      "_ts": 1794674228815
+      "_ts": 1794674277936
     }
   },
   "kactive": "kmwawjbnq4yxm"
