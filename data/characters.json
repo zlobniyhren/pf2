@@ -792,7 +792,12 @@
           "rank": 0
         }
       },
-      "feats": [],
+      "feats": [
+        {
+          "txt": "Все вмест",
+          "lvl": "1"
+        }
+      ],
       "abils": [],
       "events": [],
       "armies": [],
@@ -817,7 +822,7 @@
         }
       ],
       "activeSett": "smwawjbnqxcda",
-      "_ts": 1794673871187
+      "_ts": 1794673889935
     }
   },
   "kactive": "kmwawjbnq4yxm"
