@@ -835,6 +835,12 @@
               "x": 0,
               "y": 1,
               "r": 0
+            },
+            {
+              "b": "shop",
+              "x": 1,
+              "y": 1,
+              "r": 0
             }
           ],
           "bord": {},
@@ -848,7 +854,7 @@
         }
       ],
       "activeSett": "smwawjbnqxcda",
-      "_ts": 1794679176662
+      "_ts": 1794681605619
     }
   },
   "kactive": "kmwawjbnq4yxm"
