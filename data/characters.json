@@ -744,7 +744,7 @@
       },
       "skills": {
         "war": {
-          "rank": 1
+          "rank": 0
         },
         "wild": {
           "rank": 0
@@ -753,7 +753,7 @@
           "rank": 0
         },
         "engi": {
-          "rank": 0
+          "rank": 1
         },
         "intr": {
           "rank": 0
@@ -777,7 +777,7 @@
           "rank": 0
         },
         "poli": {
-          "rank": 0
+          "rank": 1
         },
         "indu": {
           "rank": 0
@@ -817,7 +817,7 @@
         }
       ],
       "activeSett": "smwawjbnqxcda",
-      "_ts": 1794673813192
+      "_ts": 1794673871187
     }
   },
   "kactive": "kmwawjbnq4yxm"
