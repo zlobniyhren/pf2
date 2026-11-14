@@ -744,7 +744,7 @@
       },
       "skills": {
         "war": {
-          "rank": 0
+          "rank": 1
         },
         "wild": {
           "rank": 0
@@ -817,7 +817,7 @@
         }
       ],
       "activeSett": "smwawjbnqxcda",
-      "_ts": 1794673746140
+      "_ts": 1794673813192
     }
   },
   "kactive": "kmwawjbnq4yxm"
