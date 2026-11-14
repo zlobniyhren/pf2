@@ -727,7 +727,7 @@
           "note": ""
         },
         "treas": {
-          "name": "Свет",
+          "name": "Сзет",
           "inv": "",
           "note": ""
         },
@@ -737,7 +737,7 @@
           "note": ""
         },
         "warde": {
-          "name": "Орнамент",
+          "name": "Орн",
           "inv": "",
           "note": ""
         }
@@ -822,7 +822,7 @@
         }
       ],
       "activeSett": "smwawjbnqxcda",
-      "_ts": 1794674552761
+      "_ts": 1794674665288
     }
   },
   "kactive": "kmwawjbnq4yxm"
