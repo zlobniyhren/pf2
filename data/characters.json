@@ -641,7 +641,7 @@
         "loy": "12",
         "sta": "16"
       },
-      "unrest": "",
+      "unrest": "0",
       "consumption": "0",
       "trade": "",
       "eventDC": "14",
@@ -652,12 +652,12 @@
       "infamy": "",
       "ruin": {
         "cor": {
-          "v": "",
+          "v": "0",
           "p": "",
           "t": "10"
         },
         "cri": {
-          "v": "",
+          "v": "0",
           "p": "",
           "t": "10"
         },
@@ -822,7 +822,7 @@
         }
       ],
       "activeSett": "smwawjbnqxcda",
-      "_ts": 1794674294208
+      "_ts": 1794674313782
     }
   },
   "kactive": "kmwawjbnq4yxm"
