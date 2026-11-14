@@ -647,7 +647,7 @@
       "eventDC": "14",
       "resDice": "5д4",
       "dcBase": "1",
-      "dcSize": "",
+      "dcSize": "0",
       "fame": {
         "cur": "1"
       },
@@ -842,7 +842,7 @@
         }
       ],
       "activeSett": "smwawjbnqxcda",
-      "_ts": 1794675654848
+      "_ts": 1794675716913
     }
   },
   "kactive": "kmwawjbnq4yxm"
