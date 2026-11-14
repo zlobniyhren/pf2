@@ -676,7 +676,7 @@
       },
       "commod": {
         "food": {
-          "v": "0",
+          "v": "2",
           "max": "4"
         },
         "lumb": {
@@ -842,7 +842,7 @@
         }
       ],
       "activeSett": "smwawjbnqxcda",
-      "_ts": 1794677675177
+      "_ts": 1794678797813
     }
   },
   "kactive": "kmwawjbnq4yxm"
