@@ -712,7 +712,7 @@
           "note": ""
         },
         "gener": {
-          "name": "",
+          "name": "Орн",
           "inv": "",
           "note": ""
         },
@@ -727,7 +727,7 @@
           "note": ""
         },
         "treas": {
-          "name": "",
+          "name": "Свет",
           "inv": "",
           "note": ""
         },
@@ -822,7 +822,7 @@
         }
       ],
       "activeSett": "smwawjbnqxcda",
-      "_ts": 1794674468671
+      "_ts": 1794674486596
     }
   },
   "kactive": "kmwawjbnq4yxm"
