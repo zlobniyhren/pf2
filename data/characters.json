@@ -712,7 +712,7 @@
           "note": ""
         },
         "gener": {
-          "name": "Орн",
+          "name": "",
           "inv": "",
           "note": ""
         },
@@ -737,7 +737,7 @@
           "note": ""
         },
         "warde": {
-          "name": "",
+          "name": "Орнамент",
           "inv": "",
           "note": ""
         }
@@ -822,7 +822,7 @@
         }
       ],
       "activeSett": "smwawjbnqxcda",
-      "_ts": 1794674486596
+      "_ts": 1794674529543
     }
   },
   "kactive": "kmwawjbnq4yxm"
