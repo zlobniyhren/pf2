@@ -698,7 +698,7 @@
       },
       "work": {
         "farm": "",
-        "camp": "",
+        "camp": "1",
         "mine": "",
         "quar": ""
       },
@@ -854,7 +854,7 @@
         }
       ],
       "activeSett": "smwawjbnqxcda",
-      "_ts": 1794685602617
+      "_ts": 1794685762446
     }
   },
   "kactive": "kmwawjbnq4yxm"
