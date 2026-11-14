@@ -833,7 +833,7 @@
           ],
           "bord": {},
           "infra": {},
-          "consumption": "",
+          "consumption": "0",
           "maxItem": "",
           "influence": "",
           "overcrowd": "",
@@ -842,7 +842,7 @@
         }
       ],
       "activeSett": "smwawjbnqxcda",
-      "_ts": 1794675928763
+      "_ts": 1794675957957
     }
   },
   "kactive": "kmwawjbnq4yxm"
