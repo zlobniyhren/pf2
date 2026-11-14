@@ -636,10 +636,10 @@
       "capital": "",
       "size": "",
       "abil": {
-        "cul": 10,
-        "eco": 10,
-        "loy": 10,
-        "sta": 10
+        "cul": "12",
+        "eco": "14",
+        "loy": "12",
+        "sta": "16"
       },
       "unrest": "",
       "consumption": "",
@@ -822,7 +822,7 @@
         }
       ],
       "activeSett": "smwawjbnqxcda",
-      "_ts": 1794673965146
+      "_ts": 1794674228815
     }
   },
   "kactive": "kmwawjbnq4yxm"
