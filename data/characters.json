@@ -644,7 +644,7 @@
       "unrest": "",
       "consumption": "",
       "trade": "",
-      "eventDC": "",
+      "eventDC": "14",
       "resDice": "5д4",
       "dcBase": "",
       "dcSize": "",
@@ -822,7 +822,7 @@
         }
       ],
       "activeSett": "smwawjbnqxcda",
-      "_ts": 1794674277936
+      "_ts": 1794674287332
     }
   },
   "kactive": "kmwawjbnq4yxm"
