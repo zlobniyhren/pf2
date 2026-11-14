@@ -634,7 +634,7 @@
       "heartland": "Руины",
       "gov": "Республика",
       "capital": "",
-      "size": "",
+      "size": "0",
       "abil": {
         "cul": "12",
         "eco": "14",
@@ -842,7 +842,7 @@
         }
       ],
       "activeSett": "smwawjbnqxcda",
-      "_ts": 1794675716913
+      "_ts": 1794675928763
     }
   },
   "kactive": "kmwawjbnq4yxm"
