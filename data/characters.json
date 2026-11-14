@@ -630,7 +630,7 @@
       "name": "Изенгард",
       "level": 1,
       "xp": "",
-      "charter": "",
+      "charter": "Субсидия",
       "heartland": "",
       "gov": "",
       "capital": "",
@@ -817,7 +817,7 @@
         }
       ],
       "activeSett": "smwawjbnqxcda",
-      "_ts": 1794673075211
+      "_ts": 1794673165768
     }
   },
   "kactive": "kmwawjbnq4yxm"
