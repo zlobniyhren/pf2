@@ -723,12 +723,12 @@
         },
         "magis": {
           "name": "Моррис",
-          "inv": "",
+          "inv": "1",
           "note": ""
         },
         "treas": {
           "name": "Сзет",
-          "inv": "",
+          "inv": "1",
           "note": ""
         },
         "vicer": {
@@ -738,7 +738,7 @@
         },
         "warde": {
           "name": "Орн",
-          "inv": "",
+          "inv": "1",
           "note": ""
         }
       },
@@ -822,7 +822,7 @@
         }
       ],
       "activeSett": "smwawjbnqxcda",
-      "_ts": 1794674722020
+      "_ts": 1794674728791
     }
   },
   "kactive": "kmwawjbnq4yxm"
