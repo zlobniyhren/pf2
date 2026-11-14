@@ -646,7 +646,7 @@
       "trade": "",
       "eventDC": "14",
       "resDice": "5д4",
-      "dcBase": "",
+      "dcBase": "1",
       "dcSize": "",
       "fame": {},
       "infamy": "",
@@ -822,7 +822,7 @@
         }
       ],
       "activeSett": "smwawjbnqxcda",
-      "_ts": 1794674344127
+      "_ts": 1794674353539
     }
   },
   "kactive": "kmwawjbnq4yxm"
