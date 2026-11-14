@@ -675,23 +675,23 @@
       "commod": {
         "food": {
           "v": "0",
-          "max": ""
+          "max": "4"
         },
         "lumb": {
           "v": "0",
-          "max": ""
+          "max": "4"
         },
         "luxu": {
           "v": "0",
-          "max": ""
+          "max": "4"
         },
         "ore": {
           "v": "0",
-          "max": ""
+          "max": "4"
         },
         "ston": {
           "v": "0",
-          "max": ""
+          "max": "4"
         }
       },
       "work": {
@@ -822,7 +822,7 @@
         }
       ],
       "activeSett": "smwawjbnqxcda",
-      "_ts": 1794674331646
+      "_ts": 1794674344127
     }
   },
   "kactive": "kmwawjbnq4yxm"
