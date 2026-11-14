@@ -829,6 +829,12 @@
               "x": 0,
               "y": 0,
               "r": 0
+            },
+            {
+              "b": "houses",
+              "x": 0,
+              "y": 1,
+              "r": 0
             }
           ],
           "bord": {},
@@ -842,7 +848,7 @@
         }
       ],
       "activeSett": "smwawjbnqxcda",
-      "_ts": 1794678797813
+      "_ts": 1794679089224
     }
   },
   "kactive": "kmwawjbnq4yxm"
